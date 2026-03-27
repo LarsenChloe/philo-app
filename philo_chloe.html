@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Philosophie — Chloé</title>
+<link rel="apple-touch-icon" href="icon_philo.png">
+<meta name="apple-mobile-web-app-title" content="Philo Chloé">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+:root{
+  --bg:#0a0c14;--bg2:#12151f;--bg3:#1a1e2c;--bg4:#222838;
+  --txt:#e8e4d8;--txt2:#8880a0;--txt3:#3a3650;
+  --gold:#d4a843;--gold2:#f0c060;--purple:#7060c0;--indigo:#4040a0;
+  --green:#40c070;--red:#c04040;--blue:#4080d0;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden;user-select:none}
+
+/* NAV */
+.nav-bar{display:flex;background:var(--bg2);border-bottom:2px solid var(--indigo);position:sticky;top:0;z-index:100}
+.nav-btn{flex:1;padding:14px 4px 10px;text-align:center;cursor:pointer;border:none;background:none;color:var(--txt2);display:flex;flex-direction:column;align-items:center;gap:3px;transition:color .2s}
+.nav-btn.active{color:var(--gold)}
+.nav-icon{font-size:18px}
+.nav-label{font-size:9px;letter-spacing:.05em;text-transform:uppercase}
+
+.page{display:none;padding:14px 16px;min-height:calc(100vh - 57px)}
+.page.active{display:block}
+
+/* STAR BACKGROUND EFFECT */
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 50%, rgba(64,64,160,.06) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(112,96,192,.05) 0%, transparent 50%);pointer-events:none;z-index:0}
+
+/* COMMON */
+select,button{font-family:'Inter',sans-serif}
+.ctrl-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center;position:relative;z-index:1}
+.ctrl-row select,.ctrl-row button{font-size:11px;padding:0 10px;height:34px;border:1px solid var(--bg4);border-radius:4px;background:var(--bg2);color:var(--txt);cursor:pointer}
+.save-row{display:flex;gap:6px;margin-bottom:10px;align-items:center;flex-wrap:wrap;position:relative;z-index:1}
+.save-row span{font-size:10px;color:var(--txt3)}
+.btn-save{background:#0a1020!important;color:var(--blue)!important;border:1px solid #1a3060!important;font-size:11px;padding:0 10px;height:34px;border-radius:4px;cursor:pointer}
+.btn-load{background:#100a20!important;color:var(--purple)!important;border:1px solid #301060!important;font-size:11px;padding:0 10px;height:34px;border-radius:4px;cursor:pointer}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;position:relative;z-index:1}
+.stat-box{background:var(--bg2);border-radius:4px;padding:8px 4px;text-align:center;border:1px solid var(--bg4)}
+.stat-n{font-size:20px;font-weight:700}
+.stat-l{font-size:9px;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em}
+.ok-c{color:var(--green)}
+.ko-c{color:var(--red)}
+.pbar{height:2px;background:var(--bg3);margin-bottom:10px;position:relative;z-index:1}
+.pfill{height:100%;background:var(--gold);transition:width .3s}
+.flt-row{display:flex;gap:6px;align-items:center;margin-bottom:10px;flex-wrap:wrap;position:relative;z-index:1}
+.flt-row label{font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em}
+.flt-row select{font-size:11px;padding:0 10px;height:32px;border:1px solid var(--bg4);border-radius:4px;background:var(--bg2);color:var(--txt);cursor:pointer}
+
+/* FLASHCARD */
+.flashcard{background:var(--bg2);border:1px solid var(--bg4);border-radius:8px;padding:20px 16px;cursor:pointer;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:10px;transition:border-color .15s,transform .1s;position:relative;z-index:1}
+.flashcard:active{transform:scale(.98)}
+.flashcard:hover{border-color:var(--indigo)}
+.fc-dom{font-size:9px;color:var(--purple);margin-bottom:2px;letter-spacing:.15em;text-transform:uppercase;font-weight:700}
+.fc-th{font-size:9px;color:var(--txt3);margin-bottom:12px;letter-spacing:.05em}
+.fc-w{font-size:20px;font-weight:700;text-align:center;line-height:1.3;color:var(--txt)}
+.fc-hint{font-size:10px;color:var(--txt3);margin-top:14px;letter-spacing:.1em}
+.fc-sep{width:100%;border-top:1px solid var(--bg4);margin-top:14px;padding-top:12px}
+.fc-facts{font-size:12px;color:#a09880;text-align:left;line-height:2;width:100%}
+.fact-line{display:flex;gap:8px;padding:1px 0;border-bottom:1px solid var(--bg3)}
+.fact-line:last-child{border-bottom:none}
+.fact-dot{color:var(--gold);font-weight:700;min-width:12px;flex-shrink:0}
+.card-nav{display:flex;gap:6px;justify-content:center;align-items:center;margin-bottom:10px;position:relative;z-index:1}
+.card-nav-i{font-size:11px;color:var(--txt2);min-width:80px;text-align:center}
+.card-nav button{font-size:12px;padding:0 16px;height:34px;border:1px solid var(--bg4);border-radius:4px;background:var(--bg2);color:var(--txt);cursor:pointer}
+.vote-row{display:flex;gap:8px;justify-content:center;margin-bottom:8px;position:relative;z-index:1}
+.vote-row button{flex:1;max-width:170px;font-size:12px;height:44px;border-radius:4px;cursor:pointer;font-weight:700;border:1px solid;letter-spacing:.05em}
+.btn-ok{background:#0a2014!important;color:var(--green)!important;border-color:#154028!important}
+.btn-ko{background:#200a0a!important;color:var(--red)!important;border-color:#401515!important}
+
+/* ===== PAGE 2 : LE DÉFI ===== */
+.defi-header{text-align:center;padding:8px 0 0;position:relative;z-index:1}
+.defi-title{font-size:11px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px}
+.streak-display{font-size:56px;font-weight:700;color:var(--gold2);text-shadow:0 0 30px rgba(212,168,67,.5);margin:4px 0}
+.streak-label{font-size:9px;color:var(--txt2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px}
+.record-display{font-size:12px;color:var(--txt2);margin-bottom:8px}
+.record-display span{color:var(--gold)}
+
+/* === PIXEL ART GUARDS === */
+.guard-arena{display:flex;justify-content:space-between;align-items:flex-end;margin:0 -16px;padding:0;height:300px;position:relative;z-index:1;overflow:hidden}
+.guard-wrap{width:130px;height:300px;display:flex;align-items:flex-end;justify-content:center;flex-shrink:0}
+.guard-wrap.left{padding-left:4px}
+.guard-wrap.right{padding-right:4px}
+.guard-canvas{image-rendering:pixelated;image-rendering:crisp-edges}
+
+/* Hermes floats */
+@keyframes hermesFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes hermesHappy{0%{transform:translateY(0) rotate(0)}25%{transform:translateY(-14px) rotate(-8deg)}50%{transform:translateY(-10px) rotate(8deg)}75%{transform:translateY(-14px) rotate(-4deg)}100%{transform:translateY(0) rotate(0)}}
+@keyframes hermesSad{0%,100%{transform:translateY(0)}20%{transform:translateY(-4px) rotate(-12deg)}40%{transform:translateY(-2px) rotate(12deg)}60%{transform:translateY(-4px) rotate(-6deg)}}
+@keyframes philoHappy{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-6px) rotate(-4deg)}60%{transform:translateY(-4px) rotate(4deg)}}
+@keyframes philoSad{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg) translateY(3px)}50%{transform:rotate(5deg) translateY(3px)}75%{transform:rotate(-3deg)}}
+.hermes-idle{animation:hermesFloat 3s ease-in-out infinite}
+.hermes-happy{animation:hermesHappy .6s ease}
+.hermes-sad{animation:hermesSad .5s ease}
+.philo-happy{animation:philoHappy .5s ease}
+.philo-sad{animation:philoSad .6s ease}
+
+.arena-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:10px;gap:4px}
+.combo-badge{font-size:28px;min-height:36px;text-align:center}
+
+.defi-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:8px;padding:16px 14px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 0 10px;transition:border-color .3s;position:relative;z-index:1}
+.defi-card.correct{border-color:var(--green)!important;background:#0a2014}
+.defi-card.wrong{border-color:var(--red)!important;background:#200a0a}
+.defi-q-dom{font-size:9px;color:var(--purple);text-transform:uppercase;letter-spacing:.15em;font-weight:700;margin-bottom:2px}
+.defi-q-theme{font-size:9px;color:var(--txt3);margin-bottom:10px;letter-spacing:.05em}
+.defi-q-text{font-size:18px;font-weight:700;text-align:center;line-height:1.3}
+.defi-reveal{font-size:12px;color:var(--gold);margin-top:10px;text-align:center;font-style:italic;line-height:1.5}
+
+.defi-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;position:relative;z-index:1}
+.choice-btn{padding:10px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid var(--bg4);background:var(--bg2);color:var(--txt);text-align:center;line-height:1.4;min-height:52px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:'Inter',sans-serif}
+.choice-btn:active{transform:scale(.97)}
+.choice-btn.reveal-correct{background:#0a2014;border-color:var(--green);color:var(--green)}
+.choice-btn.wrong-choice{background:#200a0a;border-color:var(--red);color:var(--red)}
+
+.defi-ctrl-btn{width:100%;padding:14px;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid;margin-bottom:8px;position:relative;z-index:1;transition:transform .1s;font-family:'Inter',sans-serif;letter-spacing:.05em;text-transform:uppercase}
+.defi-ctrl-btn:active{transform:scale(.98)}
+.btn-start{background:var(--gold);color:#0a0c14;border-color:var(--gold2)}
+.btn-next{background:var(--indigo);color:#fff;border-color:var(--purple)}
+.btn-restart{background:#400a0a;color:var(--red);border-color:var(--red)}
+
+/* PAGE 3 RÉVISION */
+.rev-search{width:100%;padding:10px 14px;border-radius:4px;font-size:12px;border:1px solid var(--bg4);background:var(--bg2);color:var(--txt);margin-bottom:10px;position:relative;z-index:1;font-family:'Inter',sans-serif}
+.rev-filters{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;position:relative;z-index:1;overflow-x:auto}
+.rev-filter-btn{padding:6px 12px;border-radius:20px;font-size:10px;cursor:pointer;border:1px solid var(--bg4);background:var(--bg2);color:var(--txt2);white-space:nowrap;text-transform:uppercase;letter-spacing:.05em}
+.rev-filter-btn.active{background:var(--indigo);border-color:var(--purple);color:var(--txt)}
+.rev-count{font-size:10px;color:var(--txt3);margin-bottom:8px;position:relative;z-index:1;text-transform:uppercase;letter-spacing:.05em}
+.rev-list{position:relative;z-index:1}
+.rev-item{background:var(--bg2);border:1px solid var(--bg4);border-radius:6px;margin-bottom:6px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.rev-item:hover{border-color:var(--indigo)}
+.rev-item-header{padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.rev-item-left{flex:1;min-width:0}
+.rev-item-dom{font-size:9px;color:var(--purple);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:2px}
+.rev-item-theme{font-size:9px;color:var(--txt3);margin-bottom:6px;letter-spacing:.05em}
+.rev-item-title{font-size:14px;font-weight:700;color:var(--txt);line-height:1.3}
+.rev-item-arrow{color:var(--txt3);font-size:14px;flex-shrink:0;transition:transform .2s}
+.rev-item.open .rev-item-arrow{transform:rotate(90deg)}
+.rev-item-body{padding:0 14px 12px;display:none;border-top:1px solid var(--bg3)}
+.rev-item.open .rev-item-body{display:block;padding-top:10px}
+.rev-fact-line{display:flex;gap:8px;padding:3px 0;border-bottom:1px solid var(--bg3);font-size:12px;color:#9088a0;line-height:1.6}
+.rev-fact-line:last-child{border-bottom:none}
+.rev-fact-dot{color:var(--gold);font-weight:700;min-width:12px;flex-shrink:0}
+
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--txt);color:var(--bg);font-size:12px;padding:8px 18px;border-radius:4px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;white-space:nowrap;font-family:'Inter',sans-serif}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<nav class="nav-bar">
+  <button class="nav-btn active" onclick="showPage('p1')" id="nb1">
+    <span class="nav-icon">🃏</span><span class="nav-label">Flashcards</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('p2')" id="nb2">
+    <span class="nav-icon">⚡</span><span class="nav-label">Le Défi</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('p3')" id="nb3">
+    <span class="nav-icon">📚</span><span class="nav-label">Révision</span>
+  </button>
+</nav>
+
+<!-- PAGE 1 : FLASHCARDS -->
+<div class="page active" id="p1">
+  <div class="ctrl-row">
+    <select id="sd"></select>
+    <select id="st"></select>
+    <button onclick="p1shuffle()">Mélanger</button>
+    <button onclick="p1reset()">Reset</button>
+  </div>
+  <div class="save-row">
+    <button class="btn-save" onclick="p1save()">Sauvegarder</button>
+    <button class="btn-load" onclick="document.getElementById('fi').click()">Charger</button>
+    <input type="file" id="fi" accept=".json" style="display:none" onchange="p1load(event)">
+    <span id="si"></span>
+  </div>
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-n" id="s-t">—</div><div class="stat-l">total</div></div>
+    <div class="stat-box"><div class="stat-n ok-c" id="s-o">0</div><div class="stat-l">sus</div></div>
+    <div class="stat-box"><div class="stat-n ko-c" id="s-k">0</div><div class="stat-l">revoir</div></div>
+    <div class="stat-box"><div class="stat-n" id="s-p">—</div><div class="stat-l">score</div></div>
+  </div>
+  <div class="pbar"><div class="pfill" id="pb" style="width:0%"></div></div>
+  <div class="flt-row">
+    <label>Filtre :</label>
+    <select id="sf" onchange="p1build()">
+      <option value="all">Toutes</option>
+      <option value="todo">À revoir</option>
+      <option value="ok">Sus</option>
+    </select>
+  </div>
+  <div class="flashcard" id="fc" onclick="p1flip()">
+    <div class="fc-dom" id="fd"></div>
+    <div class="fc-th" id="ft"></div>
+    <div class="fc-w" id="fw">Prêt, Chloé !</div>
+    <div class="fc-hint" id="fh">— toucher pour révéler —</div>
+    <div id="fa" style="display:none" class="fc-sep">
+      <div class="fc-facts" id="fc2"></div>
+    </div>
+  </div>
+  <div class="card-nav">
+    <button onclick="p1go(-1)">◀</button>
+    <span class="card-nav-i" id="ni">—</span>
+    <button onclick="p1go(1)">▶</button>
+  </div>
+  <div class="vote-row" id="vr" style="display:none">
+    <button class="btn-ko" onclick="p1vote(false)">✗ Je ne savais pas</button>
+    <button class="btn-ok" onclick="p1vote(true)">✓ Je savais !</button>
+  </div>
+</div>
+
+<!-- PAGE 2 : LE DÉFI -->
+<div class="page" id="p2">
+  <div class="defi-header">
+    <div class="defi-title">⚡ Le Défi des Sages ⚡</div>
+    <div class="streak-display" id="streak-num">0</div>
+    <div class="streak-label">série en cours</div>
+    <div class="record-display">Record : <span id="record-num">0</span></div>
+  </div>
+
+  <!-- PIXEL ART ARENA -->
+  <div class="guard-arena">
+    <div class="guard-wrap left">
+      <canvas id="hermes-canvas" class="guard-canvas hermes-idle" width="120" height="280" style="width:120px;height:280px"></canvas>
+    </div>
+    <div class="arena-center">
+      <div class="combo-badge" id="combo-badge"></div>
+    </div>
+    <div class="guard-wrap right">
+      <canvas id="philo-canvas" class="guard-canvas" width="120" height="280" style="width:120px;height:280px"></canvas>
+    </div>
+  </div>
+
+  <div class="defi-card" id="defi-card" style="display:none">
+    <div class="defi-q-dom" id="dq-dom"></div>
+    <div class="defi-q-theme" id="dq-theme"></div>
+    <div class="defi-q-text" id="dq-text"></div>
+    <div class="defi-reveal" id="dq-reveal" style="display:none"></div>
+  </div>
+
+  <div class="defi-choices" id="defi-choices" style="display:none">
+    <button class="choice-btn" id="ch0" onclick="defiAnswer(0)"></button>
+    <button class="choice-btn" id="ch1" onclick="defiAnswer(1)"></button>
+    <button class="choice-btn" id="ch2" onclick="defiAnswer(2)"></button>
+    <button class="choice-btn" id="ch3" onclick="defiAnswer(3)"></button>
+  </div>
+
+  <button class="defi-ctrl-btn btn-start" id="btn-start" onclick="defiStart()">⚡ Commencer le Défi</button>
+  <button class="defi-ctrl-btn btn-next" id="btn-next" onclick="defiNext()" style="display:none">Suivant ▶</button>
+  <button class="defi-ctrl-btn btn-restart" id="btn-restart" onclick="defiStart()" style="display:none">↺ Recommencer</button>
+</div>
+
+<!-- PAGE 3 : RÉVISION -->
+<div class="page" id="p3">
+  <input class="rev-search" id="rev-search" placeholder="▶ Rechercher..." oninput="revFilter()">
+  <div class="rev-filters" id="rev-filters"></div>
+  <div class="rev-count" id="rev-count"></div>
+  <div class="rev-list" id="rev-list"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PRENOM='Chloé';
+const ALL=[["Mythologie","Olympe","Zeus","Dieu suprême de l'Olympe | Foudre comme attribut | Père des dieux et des hommes | Nombreuses aventures amoureuses : Héra (épouse), Léto, Métis, Europe | Équivalent romain : Jupiter"],["Mythologie","Olympe","Héra","Reine de l'Olympe ; épouse de Zeus | Déesse du mariage et de la famille | Jalousie légendaire envers les maîtresses de Zeus | Persécute Héraclès et Io | Équivalent romain : Junon"],["Mythologie","Olympe","Poséidon","Dieu des mers et des tremblements de terre | Trident comme attribut | Dispute Athènes avec Athéna (olive vs eau salée) | Père du Cyclope Polyphème | Équivalent romain : Neptune"],["Mythologie","Olympe","Déméter","Déesse des moissons et de la fertilité | Cérès (romaine) | Deuil de Perséphone → hiver | Mystères d'Éleusis en son honneur | Symbole : gerbe de blé"],["Mythologie","Olympe","Athéna","Déesse de la sagesse et de la guerre stratégique | Née tout armée du crâne de Zeus | Donne l'olivier à Athènes | Égide, lance, hibou | Équivalent romain : Minerve"],["Mythologie","Olympe","Apollon","Dieu du soleil, des arts, de la prophétie | Oracle de Delphes | Lyre ; arc d'argent | Frère jumeau d'Artémis | Équivalent romain : Phébus"],["Mythologie","Olympe","Artémis","Déesse de la chasse et de la lune | Vierge éternelle | Arc et carquois ; biche | Protège les femmes en couche | Équivalent romain : Diane"],["Mythologie","Olympe","Arès","Dieu de la guerre (violence brutale) | Ares vs Athéna (stratégie vs brutalité) | Amant d'Aphrodite | Décrié même par Zeus | Équivalent romain : Mars"],["Mythologie","Olympe","Aphrodite","Déesse de l'amour et de la beauté | Née de l'écume de mer (Hésiode) ou fille de Zeus | Pomme d'or → guerre de Troie | Ceinture magique (désir) | Équivalent romain : Vénus"],["Mythologie","Olympe","Héphaïstos","Dieu du feu et de la forge | Boiteux ; rejeté par Héra | Fabrique les armes des dieux (bouclier d'Achille) | Mari trompé d'Aphrodite | Équivalent romain : Vulcain"],["Mythologie","Olympe","Hermès","Dieu des voyageurs, messagers, voleurs, commerce | Casque ailé (pétase) ; sandales ailées (talonnières) ; caducée (bâton ailé entouré de serpents) | Psychopompe : guide les âmes aux Enfers | Fils de Zeus et Maïa | Équivalent romain : Mercure"],["Mythologie","Olympe","Dionysos","Dieu du vin, de l'extase, du théâtre | Né de Zeus et Sémélé | Thyrse (bâton de lierre) ; panthère ; grappe | Bacchantes (Ménades) | Équivalent romain : Bacchus"],["Mythologie","Olympe","Hestia","Déesse du foyer et de la famille | Vierge éternelle | Feu sacré du foyer | Peu de mythes mais culte central | Équivalent romain : Vesta"],["Mythologie","Olympe","Hadès","Dieu des Enfers | Frère de Zeus et Poséidon | Ravit Perséphone | Casque d'invisibilité | Équivalent romain : Pluton"],["Mythologie","Olympe","Perséphone","Fille de Déméter ; reine des Enfers | Enlevée par Hadès | Pomme de grenade : 6 mois aux Enfers = automne/hiver | Mystères d'Éleusis | Équivalent romain : Proserpine"],["Mythologie","Créatures grecques","Cyclopes","Géants à un seul œil | Forgent la foudre de Zeus | Polyphème : fils de Poséidon aveuglé par Ulysse | Hésiode : 3 Cyclopes primordiaux (Brontès, Stéropès, Argès) | Symbolisent la brutalité sans civilisation"],["Mythologie","Créatures grecques","Méduse","Gorgone aux serpents pour cheveux | Regard pétrifiant | Persée la décapite grâce au bouclier de bronze | De son sang naît Pégase | Athéna place sa tête sur l'égide"],["Mythologie","Créatures grecques","Minotaure","Corps humain, tête de taureau | Fils de Pasiphaé et d'un taureau crétois | Enfermé dans le Labyrinthe de Dédale | Thésée le tue avec l'aide d'Ariane (fil d'Ariane) | Symbolise l'animalité enfouie"],["Mythologie","Créatures grecques","Sphinx","Lion ailé à tête de femme | Garde les portes de Thèbes | Énigme : 'Qu'est-ce qui marche à 4 pattes, puis 2, puis 3 ?' | Réponse d'Œdipe : l'homme | Se jette dans le vide"],["Mythologie","Créatures grecques","Hydre de Lerne","Serpent à 9 têtes qui repoussent si on les coupe | 2e travail d'Héraclès | Détruite en cautérisant les moignons | Sang venimeux utilisé pour les flèches d'Héraclès | Symbolise les problèmes qui se multiplient"],["Mythologie","Créatures grecques","Chimère","Lion + chèvre + serpent | Crache du feu | Tuée par Bellérophon sur Pégase | Lycie (Turquie actuelle) | Métaphore : chimère = idée impossible"],["Mythologie","Créatures grecques","Sirènes","Femmes-oiseaux (puis femmes-poissons à la Renaissance) | Chant envoûtant qui attire les marins vers la mort | Ulysse : attaché au mât, oreilles des marins bouchées | Les Argonautes : Orphée chante plus fort | Symbole de la tentation"],["Mythologie","Créatures grecques","Cerbère","Chien à 3 têtes gardant les Enfers | Queue de serpent | 12e travail d'Héraclès : le capturer vivant | Orphée l'endort avec sa lyre | Psyché lui donne du miel"],["Mythologie","Créatures grecques","Pégase","Cheval ailé né du sang de Méduse | Monture de Bellérophon | Source Hippocrène : frappe du sabot → eau jaillit | Devient constellation | Symbole de l'inspiration poétique"],["Mythologie","Créatures grecques","Centaures","Moitié homme, moitié cheval | Chiron : sage précepteur d'Achille | Centauromachie : bataille Lapithes vs Centaures | Symbolisent l'instinct vs la raison | Nessos : cause la mort d'Héraclès"],["Mythologie","Créatures grecques","Satyres et faunes","Compagnons de Dionysos | Moitié homme, moitié bouc (ou cheval) | Pan : dieu des pâturages, flûte de Pan | Lubricité et fête | Équivalent romain : faunes"],["Mythologie","Héros grecs","Héraclès (Hercule)","Plus grand héros grec | 12 travaux imposés par Eurysthée | Lion de Némée, Hydre, Cerbère, Pommes des Hespérides... | Demi-dieu (Zeus + Alcmène) | Apothéose : devient dieu après sa mort"],["Mythologie","Héros grecs","Achille","Héros de l'Iliade | Fils de Pélée et Thétis | Talon d'Achille : seul point vulnérable | Tue Hector ; tué par Pâris (flèche guidée par Apollon) | Choix : courte vie glorieuse vs longue vie obscure"],["Mythologie","Héros grecs","Ulysse (Odyssée)","Roi d'Ithaque ; héros de l'Odyssée | 10 ans de retour de Troie | Cyclope, Circé, Sirènes, Scylla et Charybde, Calypso | 'L'homme aux mille ruses' | Fidèle Pénélope qui tisse et détisse"],["Mythologie","Héros grecs","Thésée","Héros athénien | Tue le Minotaure (fil d'Ariane) | Oublie de changer les voiles → mort d'Égée | Fondateur légendaire d'Athènes | Combat les Amazones"],["Mythologie","Héros grecs","Persée","Tue Méduse avec le bouclier de bronze | Délivre Andromède du monstre | Casque d'Hadès (invisibilité), sandales ailées d'Hermès | Fils de Zeus et Danaé | Fonde Mycènes"],["Mythologie","Héros grecs","Jason et les Argonautes","Quête de la Toison d'Or | 50 héros dont Héraclès, Orphée, Castor et Pollux | Aide de Médée (magicienne) | Colchide (Géorgie actuelle) | Trahison de Médée après abandon"],["Mythologie","Héros grecs","Orphée","Poète et musicien divin | Lyre : charme humains, animaux, pierres | Descend aux Enfers pour Eurydice | Se retourne : la perd à jamais | Déchiqueté par les Bacchantes"],["Mythologie","Héros grecs","Œdipe","Roi de Thèbes | Tue son père (Laïos) sans le savoir | Épouse sa mère (Jocaste) | Résout l'énigme du Sphinx | Se crève les yeux ; exil avec Antigone"],["Mythologie","Héros grecs","Antigone","Fille d'Œdipe | Enterre son frère Polynice contre l'édit de Créon | Condamnée à mort | Symbole de la loi divine vs loi humaine | Tragédie de Sophocle"],["Mythologie","Mythes grecs","Prométhée","Titan qui vole le feu aux dieux pour le donner aux hommes | Puni par Zeus : enchaîné, aigle dévore son foie chaque jour | Libéré par Héraclès | Symbole du progrès, de la désobéissance créatrice | Prométhée = prévoyant"],["Mythologie","Mythes grecs","Pandore","Première femme créée par Héphaïstos | Boîte (jarre) de Pandore : tous les maux + l'Espérance | Épiméthée (= réfléchit après) l'épouse malgré l'avertissement | Mythe de la chute | 'Boîte de Pandore' : problèmes sans fin"],["Mythologie","Mythes grecs","Narcisse","Beau jeune homme qui tombe amoureux de son reflet | Écho : nymphe qui ne peut que répéter | Meurt en contemplant son image | Narcissisme (Freud) | Métamorphose en fleur"],["Mythologie","Mythes grecs","Icare","Fils de Dédale | S'échappe du Labyrinthe avec des ailes de cire et plumes | Vole trop près du soleil → cire fond → chute | Symbole de l'hubris (démesure) | Dédale réussit à s'enfuir"],["Mythologie","Mythes grecs","Sisyphe","Roi corinthien ; trompeur des dieux | Condamné à rouler un rocher jusqu'en haut d'une colline pour l'éternité | Camus : 'Il faut imaginer Sisyphe heureux' | Symbole de la condition humaine absurde | Sisyphean task"],["Mythologie","Mythes grecs","Midas","Roi qui obtient le don de transformer tout en or | Ne peut plus manger ni toucher ses proches | Oreilles d'âne (jugement musical) | 'Effet Midas' | Dionysos lui retire le don"],["Mythologie","Mythes grecs","Éros et Psyché","Psyché : mortelle si belle qu'Aphrodite est jalouse | Éros l'aime en secret, visite la nuit | Psyché allume la lampe → Éros fuit | Épreuves imposées par Aphrodite | Amour surmonté ; Psyché devient immortelle"],["Mythologie","Mythes grecs","Dédale et le Labyrinthe","Architecte inventeur d'Athènes | Construit le Labyrinthe pour le Minotaure en Crète | Emprisonné par Minos | Fabrique des ailes de cire et plumes | Père d'Icare"],["Mythologie","Mythes grecs","Tantale","Fils de Zeus qui coupe et sert son fils aux dieux | Puni aux Enfers : eau et fruits s'éloignent quand il tend la main | 'Supplice de Tantale' ; 'tantaliser' | Lien punition-crime (talion) | Transmet la malédiction des Atrides"],["Mythologie","Mythes grecs","Œdipe — malédiction des Atrides","Malédiction familiale sur la maison d'Atrée | Thyeste mange ses enfants | Agamemnon sacrifie Iphigénie | Clytemnestre tue Agamemnon | Oreste tue sa mère → Érinyes | Tragédies d'Eschyle (Orestie)"],["Mythologie","Mythes grecs","Les Ages du monde — Hésiode","Hésiode (Travaux et les Jours) | Âge d'or (Cronos) : bonheur et paix | Âge d'argent : déclin | Âge de bronze : guerres | Âge des héros | Âge de fer (notre époque) : souffrance"],["Mythologie","Mythes grecs","Prométhée — Théogonie d'Hésiode","Hésiode : deux grandes épopées | Théogonie : généalogie des dieux | Travaux et les Jours : éthique, agriculture, mythes | Chaos → Gaïa → Ouranos → Titans → Olympiens | Base de la cosmogonie grecque"],["Mythologie","Mythes grecs","Guerre de Troie","Pomme d'or 'à la plus belle' → Héra, Athéna, Aphrodite | Pâris choisit Aphrodite ; reçoit Hélène | 10 ans de siège | Cheval de Troie (Ulysse) | Iliade d'Homère ; fondement de la culture occidentale"],["Mythologie","Mythologie romaine","Romulus et Rémus","Fondateurs légendaires de Rome (753 av. J.-C.) | Fils de Mars et Rhéa Silvia | Allaités par une louve | Romulus tue Rémus lors de la querelle des auspices | Fondation de Rome le 21 avril"],["Mythologie","Mythologie romaine","Énée","Héros troyen ; fils d'Anchise et Vénus | Fuit Troie en flammes avec son père et son fils Ascagne | Voyage en Méditerranée (Didon à Carthage) | Fonde le peuple latin | Virgile : Énéide (épopée nationale romaine)"],["Mythologie","Mythologie romaine","Janus","Dieu des commencements, des portes, des passages | Deux visages (passé et futur) | Mois de janvier | Temple de Janus à Rome : portes ouvertes en temps de guerre | Janus = bifrons"],["Mythologie","Mythologie romaine","Vesta et les Vestales","Déesse du foyer sacré de Rome | Vestales : 6 prêtresses vierges | Gardent le feu sacré 30 ans | Chasteté obligatoire ; privilèges et sanctions sévères | Forum de Rome : temple de Vesta"],["Mythologie","Mythologie romaine","Quirinus","Romulus divinisé | Dieu de l'État romain | Triade archaïque : Jupiter-Mars-Quirinus | Citoyens romains = Quirites | Fêtes : Quirinales"],["Mythologie","Mythologie romaine","Fortuna","Déesse du hasard et du destin | Roue de Fortune (toujours tournante) | Corne d'abondance et gouvernail | 'Fortuna audaces iuvat' : la Fortune favorise les audacieux | Machiavel : Fortuna vs Virtù"],["Mythologie","Mythologie égyptienne","Râ — dieu solaire","Dieu solaire principal | Navigue dans sa barque solaire | Lutte chaque nuit contre Apophis (serpent du chaos) | Fusionne avec Amon → Amon-Râ | Œil de Râ : symbole de protection"],["Mythologie","Mythologie égyptienne","Osiris","Dieu de la mort et de la résurrection | Tué et démembré par Seth | Reconstitué par Isis | Juge des morts dans la salle des Deux Maats | Mythe de la mort et résurrection : cycle des saisons"],["Mythologie","Mythologie égyptienne","Isis","Grande magicienne ; épouse d'Osiris | Reconstitue le corps d'Osiris | Protège Horus enfant | Nœud d'Isis (tyet) : symbole | Culte répandu dans tout le monde méditerranéen"],["Mythologie","Mythologie égyptienne","Horus","Fils d'Osiris et Isis | Faucon ; Œil d'Horus (oudjat) : protection | Combat Seth pour le trône d'Égypte | Pharaon = Horus vivant | Œil gauche = lune ; droit = soleil"],["Mythologie","Mythologie égyptienne","Seth","Dieu du chaos, des déserts, des tempêtes | Tue et démembre Osiris | Animal-Seth : créature mythique | Associé aux étrangers | Réhabilité sous certaines dynasties"],["Mythologie","Mythologie égyptienne","Anubis","Dieu à tête de chacal | Guide des âmes dans les Enfers | Pesée du cœur : balance vs plume de Maât | Embaumement et momification | Garde les nécropoles"],["Mythologie","Mythologie égyptienne","Thoth","Dieu de la sagesse, de l'écriture, de la lune | Tête d'ibis ou babouin | Inventeur des hiéroglyphes | Scribe des dieux ; juge lors de la pesée du cœur | Équivalent grec : Hermès Trismégiste"],["Mythologie","Mythologie égyptienne","Maât","Déesse de la vérité, de la justice et de l'harmonie cosmique | Plume d'autruche (pesée du cœur) | Le pharaon doit faire régner Maât | Isefet = chaos (opposé) | Concept central de la morale égyptienne"],["Mythologie","Mythologie égyptienne","Aton et le monothéisme d'Akhenaton","Aton : disque solaire | Akhenaton (1353–1336 av. J.-C.) : révolution monothéiste | Ferme les temples des autres dieux | Capitale : Akhetaton (Amarna) | Après sa mort : retour au polythéisme ; son nom effacé"],["Mythologie","Mythologie mésopotamienne","Gilgamesh","Roi légendaire d'Uruk | Épopée de Gilgamesh (~2 100 av. J.-C.) : plus ancien texte littéraire | Amitié avec Enkidu ; mort d'Enkidu | Quête de l'immortalité | Déluge (Utnapishtim) : ancêtre du déluge biblique"],["Mythologie","Mythologie mésopotamienne","Marduk","Dieu principal de Babylone | Tue Tiamat (dragon primordial) pour créer le monde | Enuma Elish : épopée de la création | Statue de Marduk volée lors de conquêtes | Équivalent des dieux suprêmes"],["Mythologie","Mythologie mésopotamienne","Inanna / Ishtar","Déesse de l'amour et de la guerre | Descente aux Enfers (Erezkigal) | Gilgamesh refuse ses avances | Étoile du matin (Vénus) | Équivalent sémitique : Astarté ; grec : Aphrodite"],["Mythologie","Mythologie mésopotamienne","Déluge de Ziusudra / Utnapishtim","Mythe sumérien du déluge | Dieux décident d'exterminer l'humanité | Un homme juste construit un bateau | Animaux embarqués | Ancêtre direct du Déluge de Noé"],["Mythologie","Mythologie hindoue","Brahma, Vishnu, Shiva — Trimûrti","Trinité hindoue | Brahma : créateur (4 têtes ; Saraswati) | Vishnu : préservateur (10 avatars dont Krishna et Rama) | Shiva : destructeur (danse cosmique Nataraja) | Représentent les cycles de l'univers"],["Mythologie","Mythologie hindoue","Krishna","8e avatar de Vishnu | Mahabharata : guide Arjuna (Bhagavad-Gita) | Dieu de l'amour et de la compassion | Flûte ; vaches ; peau bleue | 'Je suis la mort, la destructrice des mondes' (Bhagavad-Gita)"],["Mythologie","Mythologie hindoue","Ganesh","Dieu à tête d'éléphant | Fils de Shiva et Parvati | Élimine les obstacles ; protège les commencements | Monture : un rat | Dieu le plus populaire de l'hindouisme"],["Mythologie","Mythologie hindoue","Ramayana","Épopée : Rama sauve Sita enlevée par Ravana | Avec l'aide d'Hanuman (singe divin) | Combat entre bien et mal | Idéal du roi juste | Fondement culturel de l'Inde et de l'Asie du Sud-Est"],["Mythologie","Mythologie hindoue","Mahabharata","Plus longue épopée du monde (~100 000 strophes) | Guerre des Pandavas vs Kauravas | Bhagavad-Gita : dialogue Krishna-Arjuna | 'La guerre est mauvaise mais parfois nécessaire' | Fondement de la philosophie hindoue"],["Mythologie","Mythologie nordique","Odin","Dieu suprême des Ases | Œil sacrifié pour la sagesse à la source de Mimir | Odin se pend à Yggdrasil pour obtenir les runes | Deux corbeaux (Huginn et Muninn) | Équivalent germanique : Wotan"],["Mythologie","Mythologie nordique","Thor","Dieu du tonnerre | Mjöllnir : marteau | Protège les hommes et les dieux | Ennemi des géants de glace | Jour : jeudi (Thursday = Thor's day)"],["Mythologie","Mythologie nordique","Loki","Dieu de la ruse et du chaos | Mi-dieu mi-géant | Tue Baldr par jalousie | Enchaîné jusqu'au Ragnarök | Père des monstres : Fenrir, Hel, Jörmungandr"],["Mythologie","Mythologie nordique","Ragnarök","Fin du monde nordique | Fenrir libéré ; Jörmungandr sort de l'océan | Thor tue le serpent, meurt de son venin | Odin dévoré par Fenrir | Puis renaissance : nouveau monde vert"],["Mythologie","Mythologie nordique","Yggdrasil","Arbre cosmique du monde nordique | Frêne immense reliant 9 mondes | Asgard (dieux) ; Midgard (hommes) ; Niflheim (enfers) | Trois Nornes tissent le destin à sa base | Écureuil Ratatöskr court sur le tronc"],["Mythologie","Mythologie nordique","Valkyries et Valhalla","Valkyries : guerrières d'Odin qui choisissent les morts au combat | Valhalla : palais céleste des guerriers morts | Einherjar : guerriers qui s'entraînent pour le Ragnarök | Freya reçoit la moitié des morts (Fólkvangr) | Opéra de Wagner : La Walkyrie"],["Mythologie","Mythologie nordique","Baldr","Dieu de la lumière et de la beauté | Mort prédite → tout jure de ne pas le blesser sauf le gui | Loki guide la main d'Höðr aveugle → Baldr tué | Deuil des dieux | Renaîtra après le Ragnarök"],["Mythologie","Cosmogonies","Genèse biblique","Création en 6 jours ; repos le 7e | Adam et Ève ; Jardin d'Éden | Serpent ; pomme ; Chute | Caïn et Abel | Déluge de Noé : arche, 40 jours"],["Mythologie","Cosmogonies","Big Bang mythique vs scientifique","Mythes de création : chaos primordial dans toutes les cultures | Égypte : Noun (eaux primordiales) | Grèce : Chaos, puis Gaïa, Éros, Nuit | Nordique : Ginnungagap (vide) | Science : Big Bang (~13,8 milliards d'années)"],["Mythologie","Cosmogonies","Yin et Yang — cosmogonie chinoise","Dualité fondamentale de l'univers | Yin : obscur, féminin, passif ; Yang : clair, masculin, actif | Tao : voie de l'équilibre | Pangu : géant dont le corps forme le monde | Wu Xing : 5 éléments (bois, feu, terre, métal, eau)"],["Mythologie","Cosmogonies","Mythe aztèque — Cinq Soleils","Mexica/Aztèques : 5 ères successives détruites | 5e Soleil : sacrifices humains nécessaires pour maintenir le soleil | Quetzalcóatl : serpent à plumes ; dieu de la connaissance | Huitzilopochtli : dieu de la guerre et du soleil | Tenochtitlán : navel du monde"],["Mythologie","Cosmogonies","Mythologie celtique — druides","Druides : prêtres, juges, savants gaulois | Cycle irlandais : Tuatha Dé Danann vs Formorians | Arthur et les chevaliers de la Table Ronde (Bretagne) | Autre monde (Tír na nÓg) : île éternelle | Samain (Halloween) : nuit où les morts reviennent"],["Philosophie","Philosophie antique","Thalès de Milet","~624–546 av. J.-C. | 1er philosophe occidental (selon Aristote) | L'eau est le principe de toutes choses (arché) | 'Tout est plein de dieux' | Prédit une éclipse solaire (585 av. J.-C.)"],["Philosophie","Philosophie antique","Anaximandre","~610–546 av. J.-C. | L'apeiron (l'indéfini) comme arché | Les choses reviennent à leur origine pour expier leur injustice | 1re carte du monde connue | Évolutionnisme précoce : l'homme vient du poisson"],["Philosophie","Philosophie antique","Héraclite","~535–475 av. J.-C. | 'On ne se baigne jamais deux fois dans le même fleuve' | Logos : raison universelle | Tout s'écoule (panta rhei) | Unité des contraires : le chemin monte et descend est le même"],["Philosophie","Philosophie antique","Parménide","~515–450 av. J.-C. | L'être est ; le non-être n'est pas | L'être est un, immobile, éternel | Le changement est illusion (contre Héraclite) | Disciple Zénon : paradoxes d'Achille et la tortue"],["Philosophie","Philosophie antique","Zénon d'Élée","~490–430 av. J.-C. | Paradoxes contre le mouvement | Achille et la tortue : jamais de rattrapage par division infinie | La flèche : à chaque instant elle est immobile | Défend Parménide par réduction à l'absurde"],["Philosophie","Philosophie antique","Démocrite","~460–370 av. J.-C. | Atomes et vide : tout est fait de particules indivisibles | Rien ne vient de rien | L'âme aussi est faite d'atomes | Précurseur de la physique atomique | 'Le philosophe qui rit'"],["Philosophie","Philosophie antique","Pythagore","~570–495 av. J.-C. | 'Tout est nombre' | Théorème de Pythagore (connu depuis Babylone) | Métempsychose : transmigration des âmes | Secte pythagoricienne ; règles alimentaires | Musique = rapport mathématiques"],["Philosophie","Philosophie antique","Protagoras","~490–420 av. J.-C. | Sophiste | 'L'homme est la mesure de toutes choses' | Relativisme : pas de vérité absolue | Enseignait la rhétorique contre rémunération | Condamné pour impiété à Athènes"],["Philosophie","Philosophie antique","Socrate","470–399 av. J.-C. | N'écrit rien ; connu par Platon et Xénophon | Maïeutique : faire accoucher la vérité | 'Connais-toi toi-même' | Procès pour impiété et corruption de la jeunesse | Mort par la ciguë"],["Philosophie","Philosophie antique","La mort de Socrate — Phédon","Platon, Phédon | Dernières heures de Socrate | Arguments pour l'immortalité de l'âme | 'Criton, nous devons un coq à Asclépios' | Sérénité face à la mort : modèle philosophique"],["Philosophie","Philosophie antique","Platon — La République","~380 av. J.-C. | Cité idéale gouvernée par les philosophes-rois | 3 classes : philosophes, gardiens, producteurs | Mythe de la caverne : éducation comme sortie des ombres | Critique de la démocratie et de la tyrannie"],["Philosophie","Philosophie antique","Platon — Banquet (Éros)","~385 av. J.-C. | Symposium : discours sur l'amour | Mythe d'Aristophane : humains coupés en deux cherchent leur moitié | Discours de Socrate-Diotime : amour comme désir du Beau absolu | Amour platonique = amour de l'Idée"],["Philosophie","Philosophie antique","Platon — Phèdre","~370 av. J.-C. | Âme comme attelage ailé : cheval blanc (noble), cheval noir (pulsions), aurige (raison) | Critique de l'écriture (Thot) | Rhétorique et vérité | Métempsychose"],["Philosophie","Philosophie antique","Aristote — Éthique à Nicomaque","~330 av. J.-C. | Bonheur = eudaimonia (activité selon la vertu) | Vertu comme juste milieu entre deux excès | Philia : amitié ; forme supérieure de relation | 'L'homme est un être social par nature'"],["Philosophie","Philosophie antique","Aristote — Poétique","~335 av. J.-C. | Catharsis : purification des passions par la tragédie | Mimèsis : imitation de la réalité | Unités de temps, lieu, action | Hamartia : faute tragique du héros | Base de la théorie littéraire occidentale"],["Philosophie","Philosophie antique","Aristote — Politique","~335 av. J.-C. | 'Zoom politikon' : l'homme est animal politique | Analyse de 158 constitutions | Tyranie, oligarchie, démocratie : formes déviées | Politie : régime mixte idéal | Esclavage 'naturel' : point aveugle"],["Philosophie","Philosophie antique","Épicure — Lettre à Ménécée","~306 av. J.-C. | 'Le plus grand des biens est la prudence' | Tétrapharmakos : 4 remèdes ('N'aie pas peur de la mort, du dieu, du mal à venir, ni du bien fugitif') | Amitié comme bien suprême | Jardin d'Épicure : communauté philosophique"],["Philosophie","Philosophie antique","Stoïcisme — Zénon de Kition","~334–262 av. J.-C. | Fonde le stoïcisme à Athènes (~300) | Portique (Stoa) où il enseigne | Vivre selon la nature = vivre selon la raison | Cosmopolitisme : citoyen du monde"],["Philosophie","Philosophie antique","Épictète — Manuel","~50–135 apr. J.-C. | Esclave affranchi | 'Ce qui dépend de nous : notre jugement, désir, aversion' | 'Ce qui ne dépend pas : corps, réputation, pouvoirs' | Manuel (Enchiridion) : pratique stoïcienne quotidienne"],["Philosophie","Philosophie antique","Marc Aurèle — Méditations","121–180 | Méditations : journal intime jamais destiné à la publication | 'Aime-toi toi-même, mais aime aussi les autres' | 'Ne perds pas de temps sur ce que tu ne peux pas changer' | Stoïcisme impérial"],["Philosophie","Philosophie antique","Scepticisme de Pyrrhon","~365–275 av. J.-C. | Épochè : suspension du jugement sur tout | Les choses ne sont ni belles ni laides | Ataraxie par l'indifférence | Suit Alexandre le Grand en Inde | Sextus Empiricus : Hypotyposes pyrrhoniennes"],["Philosophie","Philosophie antique","Plotin — L'Un","205–270 | Néoplatonisme | L'Un → Intellect → Âme → Matière | Procession et conversion : l'âme descend et peut remonter | Extase mystique | Influence christianisme, islam, kabbale"],["Philosophie","Philosophie antique","Diogène de Sinope — Cynisme","~404–323 av. J.-C. | Vit dans un tonneau | 'Je cherche un homme' (lanterne en plein jour) | Refuse les conventions sociales | Alexandre lui rend visite : 'Que veux-tu ?' — 'Que tu te pousses, tu me caches le soleil' | Autosuffisance"],["Philosophie","Philosophie antique","Aristippe — Hédonisme","~435–356 av. J.-C. | Disciple de Socrate | Fonde l'école cyrénaïque | Le plaisir immédiat est le souverain bien | Corps > esprit pour le plaisir | Distinct de l'épicurisme (plaisir stable)"],["Philosophie","Philosophie médiévale","Augustin — Les Confessions","397–400 | Autobiographie spirituelle | 'Notre cœur est sans repos jusqu'à ce qu'il repose en toi' | Conversion au christianisme (386) | Péché, grâce, temps"],["Philosophie","Philosophie médiévale","Augustin — La Cité de Dieu","413–426 | Après le sac de Rome (410) | Deux cités : Cité de Dieu (élus) vs Cité terrestre (damnés) | Histoire = marche vers la Cité de Dieu | Fondement de la philosophie politique chrétienne"],["Philosophie","Philosophie médiévale","Problème des universaux","XIe–XIVe s. | Réalisme (Platon) : les universaux existent réellement | Nominalisme (Ockham) : ce sont des mots | Conceptualisme (Abélard) : concepts mentaux | Débat fondateur de la philosophie médiévale"],["Philosophie","Philosophie médiévale","Anselme — Preuve ontologique","1033–1109 | 'Dieu est ce dont on ne peut rien concevoir de plus grand' | Si Dieu n'existait que dans l'esprit, on pourrait concevoir un être plus grand | Donc Dieu existe réellement | Critiqué par Kant : l'existence n'est pas un prédicat"],["Philosophie","Philosophie médiévale","Thomas d'Aquin — 5 voies","1225–1274 | 5 preuves de l'existence de Dieu | 1. Mouvement (premier moteur immobile) 2. Causalité 3. Contingence 4. Degrés de perfection 5. Finalité | Synthèse aristotélico-chrétienne"],["Philosophie","Philosophie médiévale","Duns Scot — haeccéité","~1266–1308 | 'Docteur subtil' | Haeccéité : ce qui fait qu'une chose est cette chose-ci | Volontarisme : la volonté prime sur la raison | Univocité de l'être | Influence sur Spinoza et Deleuze"],["Philosophie","Philosophie médiévale","Guillaume d'Ockham — nominalisme","~1287–1347 | 'Rasoir d'Ockham' : ne pas multiplier les entités sans nécessité | Les universaux sont de simples mots (voces) | Séparation foi et raison | Précurseur de l'empirisme et de la science moderne"],["Philosophie","Philosophie médiévale","Avicenne — Canon de la médecine","980–1037 | Canon : encyclopédie médicale utilisée jusqu'au XVIIe s. | Livre de la guérison : métaphysique | 'L'homme volant' : argument pour l'âme | Distinction essence/existence"],["Philosophie","Philosophie médiévale","Averroès — commentaires d'Aristote","1126–1198 | 'Le Commentateur' pour les scolastiques | Raison peut accéder à la vérité sans révélation | Éternité du monde | Condamné par le calife et par l'Église | Averroïsme latin"],["Philosophie","Philosophie médiévale","Maïmonide — Guide des égarés","1138–1204 | Guide des égarés (~1190) | Réconcilier philosophie aristotélicienne et Torah | Attributs négatifs de Dieu : on ne peut dire que ce qu'il n'est pas | Influence Aquin, Spinoza, Leibniz"],["Philosophie","Philosophie moderne","Descartes — Méditations","1641 | 6 méditations | Doute hyperbolique → cogito → Dieu garant de la vérité → monde extérieur | 'Je pense donc je suis' | Dualisme : res cogitans (âme) vs res extensa (corps)"],["Philosophie","Philosophie moderne","Descartes — méthode","1637 | 4 règles : évidence, analyse, synthèse, dénombrement | Mathématisation de la nature | 'Rendre les hommes maîtres et possesseurs de la nature' | Révolution scientifique"],["Philosophie","Philosophie moderne","Spinoza — Dieu ou Nature","1632–1677 | Deus sive Natura : Dieu = Nature (monisme) | Pas de providence, pas de libre arbitre | La liberté = comprendre la nécessité | Excommunié de la communauté juive (1656) | 'Homme libre à qui la mort est la dernière chose'"],["Philosophie","Philosophie moderne","Spinoza — Éthique (structure)","1677 | More geometrico : méthode géométrique | Définitions, axiomes, propositions, scolies | 5 parties : Dieu, âme, passions, servitude, liberté | 'La béatitude n'est pas la récompense de la vertu mais la vertu elle-même'"],["Philosophie","Philosophie moderne","Leibniz — monadologie","1714 | Monades : substances simples sans parties ni fenêtres | Harmonie préétablie : les monades 's'accordent' sans interagir | Meilleur des mondes possibles | Calcul différentiel (simultané avec Newton) | Optimisme raillé dans Candide"],["Philosophie","Philosophie moderne","Hobbes — Léviathan","1651 | État de nature : 'guerre de tous contre tous' | Vie naturelle : 'solitaire, pauvre, brutale et courte' | Contrat social : abandon des droits naturels à un souverain absolu | Léviathan : monstre biblique = État | Fondateur du contractualisme"],["Philosophie","Philosophie moderne","Locke — Lettre sur la tolérance","1689 | Séparation Église-État | La tolérance ne s'étend pas aux athées ni aux catholiques (limites) | Influence sur Voltaire | Fondement des démocraties libérales"],["Philosophie","Philosophie moderne","Locke — Essai sur l'entendement humain","1689 | Tabula rasa : l'esprit naît vide | Idées simples (sensations) → idées complexes | Pas d'idées innées (contre Descartes) | Qualités premières (objectives) vs secondes (subjectives) | Père de l'empirisme moderne"],["Philosophie","Philosophie moderne","Hume — Traité de la nature humaine","1739–1740 | Impressions vs idées | Problème de l'induction : aucune loi universelle ne se déduit des faits | Causalité = habitude mentale | 'La raison est esclave des passions' | Scepticisme modéré"],["Philosophie","Philosophie moderne","Hume — Dialogues sur la religion naturelle","1779 (posthume) | Critique de l'argument téléologique | Philon, Cléanthe, Déméa | 'Qui a créé Dieu ?' | Fondement de la critique philosophique de la religion"],["Philosophie","Philosophie moderne","Rousseau — Émile ou de l'éducation","1762 | L'enfant est naturellement bon | Éducation négative : laisser l'enfant expérimenter | 'Les hommes sont naturellement bons ; c'est la société qui les corrompt' | Profession de foi du vicaire savoyard"],["Philosophie","Philosophie moderne","Rousseau — Discours sur l'inégalité","1755 | État de nature : amour de soi (bon) vs amour propre (social) | La propriété privée origine de l'inégalité | 'Le premier qui ayant enclos un terrain dit : ceci est à moi...' | Critique de la civilisation"],["Philosophie","Philosophie moderne","Kant — Critique de la raison pure","1781 | Révolution copernicienne : c'est l'esprit qui structure l'expérience | Formes a priori : espace, temps (intuitions) ; catégories (concepts) | Phénomène (connaissable) vs noumène (chose en soi) | Limites de la métaphysique"],["Philosophie","Philosophie moderne","Kant — Critique de la raison pratique","1788 | Impératif catégorique : 'Agis comme si la maxime de ton action devait devenir une loi universelle' | Devoir moral autonome | La personne humaine est une fin, jamais un moyen | Postulats : liberté, immortalité, Dieu"],["Philosophie","Philosophie moderne","Kant — Critique de la faculté de juger","1790 | Jugement esthétique : 'C'est beau' ≠ 'Ça me plaît' | Beau = satisfaction désintéressée | Sublime : admiration et effroi | Finalité de la nature | Pont entre théorie et pratique"],["Philosophie","Philosophie moderne","Kant — Qu'est-ce que les Lumières ?","1784 | 'Sapere aude ! Aie le courage de te servir de ton propre entendement !' | Sortir de la minorité intellectuelle | L'usage public de la raison doit être libre | Fondement philosophique des Lumières"],["Philosophie","Philosophie moderne","Hegel — Phénoménologie de l'Esprit","1807 | L'Esprit (Geist) prend conscience de lui-même à travers l'histoire | Dialectique : thèse-antithèse-synthèse | Maître et esclave : la conscience de soi passe par l'autre | 'Le réel est rationnel ; le rationnel est réel'"],["Philosophie","Philosophie moderne","Hegel — Philosophie du droit","1820 | L'État comme réalisation de la liberté | Famille → Société civile → État | Sittlichkeit : moralité concrète incarnée dans les institutions | 'La chouette de Minerve ne prend son vol qu'au crépuscule'"],["Philosophie","Philosophie moderne","Marx — aliénation","1844 | Manuscrits de 1844 | Aliénation du travail : l'ouvrier est étranger à son produit, à son activité, à son espèce | '4 aliénations' | Humanisme marxiste | Base du concept de travail aliéné"],["Philosophie","Philosophie moderne","Marx — matérialisme dialectique","Das Kapital I (1867) | Hegel 'remis sur les pieds' : idées reflètent les conditions matérielles | Mode de production → rapports de production | Plus-value : travail non payé | Loi de la valeur"],["Philosophie","Philosophie moderne","Nietzsche — Naissance de la tragédie","1872 | Apollinien (ordre, mesure, forme) vs Dionysiaque (ivresse, débordement) | Socrate a tué le Dionysiaque grec | Wagner comme espoir de renaissance | Nietzsche renie ce livre ensuite"],["Philosophie","Philosophie moderne","Nietzsche — Généalogie de la morale","1887 | Morale des maîtres (aristocrates) vs morale des esclaves (ressentiment) | Christianisme = morale des esclaves | Transvaluation des valeurs | 'Dieu est mort' : conséquences du nihilisme"],["Philosophie","Philosophie moderne","Nietzsche — Éternel retour","Ainsi parlait Zarathoustra (1883) | 'Et si ta vie devait se répéter infiniment ?' | Test suprême : veux-tu que cela revienne ? | Amor fati : aimer son destin | Pensée la plus lourde et la plus libératrice"],["Philosophie","Philosophie moderne","Schopenhauer — Le Monde","1818 | Le monde comme représentation : phénomène | Le monde comme volonté : noumène aveugle | Souffrance universelle car la volonté est insatiable | Salut : art (temporaire) ou ascèse (définitif) | 'La vie oscille comme un pendule entre douleur et ennui'"],["Philosophie","Philosophie moderne","Kierkegaard — L'alternative","1843 | Stade esthétique (plaisir, Don Juan) vs stade éthique (devoir, Socrate) vs stade religieux (foi, Abraham) | Saut dans la foi | L'angoisse : vertige de la liberté | Subjectivité = vérité"],["Philosophie","Philosophie moderne","Utilitarisme — Bentham","1748–1832 | Calcul hédoniste : peines et plaisirs quantifiables | 'Le plus grand bonheur du plus grand nombre' | Panoptique : prison circulaire | Base de la philosophie du droit pénal | Critique : ne protège pas les minorités"],["Philosophie","Philosophie moderne","Mill — Utilitarisme","1863 | Utilitarisme + hiérarchie qualitative des plaisirs | 'Mieux vaut être Socrate insatisfait qu'un imbécile satisfait' | De la liberté (1859) : principe de préjudice | Défenseur des droits des femmes (The Subjection of Women, 1869)"],["Philosophie","Philosophie moderne","Tocqueville — De la démocratie en Amérique","1835–1840 | Analyse de la démocratie américaine | Tyrannie de la majorité | Individualisme démocratique | 'Le despotisme doux' : confort vs liberté | Séparation Église-État comme force"],["Philosophie","Philosophie moderne","Bergson — Le Temps","1859–1941 | Durée (temps vécu) vs temps scientifique (espace) | L'évolution créatrice (1907) : élan vital | Intuition vs intelligence | Rire (1900) : le comique = mécanique plaqué sur du vivant | Prix Nobel de littérature 1927"],["Philosophie","Philosophie moderne","William James — Pragmatisme","1842–1910 | Pragmatisme (1907) | Une idée est vraie si elle est utile | Vérité comme processus | Psychologie de la religion | Fondateur de la psychologie américaine (Principes de psychologie, 1890)"],["Philosophie","Philosophie contemporaine","Husserl — intentionnalité","1859–1938 | 'Toute conscience est conscience de quelque chose' | Réduction phénoménologique (épochè) | Mettre entre parenthèses l'existence du monde | Lebenswelt : monde de la vie | Fonde la phénoménologie"],["Philosophie","Philosophie contemporaine","Heidegger — Être et Temps","1927 | Question de l'être oubliée par la philosophie | Dasein : être-là ; être-dans-le-monde | Être-en-vue-de-la-mort : authenticité | Angst (angoisse) révèle le rien | Temporalité comme horizon de l'être"],["Philosophie","Philosophie contemporaine","Heidegger — La question de la technique","1954 | Technique moderne : arraisonnement (Gestell) | La nature réduite à un 'fond disponible' | Danger : l'homme lui-même arraisonné | 'Là où est le danger croît aussi ce qui sauve' | Écologie philosophique"],["Philosophie","Philosophie contemporaine","Sartre — L'Être et le Néant","1943 | En-soi (choses) vs pour-soi (conscience) | Conscience = néantisation | Mauvaise foi : se prendre pour une chose | 'L'existence précède l'essence' | Liberté radicale et angoissante"],["Philosophie","Philosophie contemporaine","Sartre — L'Existentialisme est un humanisme","1945 | Conférence de défense de l'existentialisme | 'Condamné à être libre' | Responsabilité totale | Intersubjectivité : l'autre indispensable | 'L'enfer c'est les autres' (Huis clos, 1944)"],["Philosophie","Philosophie contemporaine","Simone de Beauvoir — Éthique","Le Deuxième Sexe (1949) | Pour une morale de l'ambiguïté (1947) | Condition de la femme comme altérité radicale | 'On ne naît pas femme, on le devient' | Féminisme existentialiste"],["Philosophie","Philosophie contemporaine","Camus — L'absurde","1942 | Le Mythe de Sisyphe | Absurde = confrontation silence du monde + désir humain de sens | 3 réponses : suicide (non) ; espoir religieux (non) | Révolte : vivre malgré l'absurde | 'Il faut imaginer Sisyphe heureux'"],["Philosophie","Philosophie contemporaine","Camus — La Révolte","L'Homme révolté (1951) | La révolte comme valeur humaniste | Critique du marxisme révolutionnaire | Rupture avec Sartre | 'Je me révolte, donc nous sommes'"],["Philosophie","Philosophie contemporaine","Wittgenstein — Tractatus","1921 | 'Le monde est tout ce qui est le cas' | Les faits = images logiques | Ce qui peut être dit peut l'être clairement | 'Ce dont on ne peut parler, il faut le taire' | Limite du langage = limite du monde"],["Philosophie","Philosophie contemporaine","Wittgenstein — Investigations philosophiques","1953 | Révolution par rapport au Tractatus | Signification = usage | Jeux de langage : pas de sens hors contexte | Pas de langage privé | Thérapie philosophique : dissoudre les problèmes"],["Philosophie","Philosophie contemporaine","Popper — Falsifiabilité","La Logique de la découverte scientifique (1934) | Une théorie est scientifique ssi elle peut être réfutée | Pas d'induction : conjectures et réfutations | Évolutionnisme épistémologique | Critique : marxisme et psychanalyse sont non-scientifiques"],["Philosophie","Philosophie contemporaine","Popper — La Société ouverte","1945 | Critique du 'tribalisme', de Platon, Hegel, Marx | Ingénierie sociale fragmentaire vs utopie totale | Démocratie = gouvernement qu'on peut renverser sans violence | Contre l'historicisme"],["Philosophie","Philosophie contemporaine","Kuhn — Structure des révolutions scientifiques","1962 | Paradigme : ensemble d'hypothèses, méthodes, valeurs | Science normale vs révolution scientifique | Incommensurabilité des paradigmes | Newton → Einstein : rupture | Paradigm shift"],["Philosophie","Philosophie contemporaine","Arendt — Les Origines du totalitarisme","1951 | Analyse nazisme et stalinisme comme phénomènes nouveaux | Idéologie + terreur = totalitarisme | Destruction de l'espace public | 'Les hommes sont conditionnés mais non déterminés'"],["Philosophie","Philosophie contemporaine","Arendt — Banalité du mal","Eichmann à Jérusalem (1963) | Eichmann : pas un monstre mais un fonctionnaire sans pensée | 'Banalité du mal' : obéissance et absence de réflexion | Pensée comme résistance | Controverse avec Gershom Scholem"],["Philosophie","Philosophie contemporaine","Arendt — Condition de l'homme moderne","1958 | 3 activités fondamentales : travail (animal laborans), œuvre (homo faber), action (politique) | L'action dans la pluralité = liberté politique | Natalité : chaque naissance = nouveau commencement | Crise de la modernité : triomphe du travail"],["Philosophie","Philosophie contemporaine","Foucault — Surveiller et punir","1975 | Du supplice au panoptique | Naissance de la prison et de la société disciplinaire | Corps dociles | Panoptique (Bentham) : voir sans être vu | Pouvoir diffus dans tous les corps sociaux"],["Philosophie","Philosophie contemporaine","Foucault — Histoire de la sexualité","1976–1984 | Vol. 1 : la volonté de savoir | Répression sexuelle = mythe | Pouvoir produit et canalise la sexualité | Biopolitique : gouvernement des corps et des populations | Souci de soi (vol. 3)"],["Philosophie","Philosophie contemporaine","Foucault — Archéologie du savoir","1969 | Discours : ensemble de règles définissant ce qui peut être dit | Épistémè : configuration du savoir à une époque | Ruptures épistémologiques | Mort de l'auteur (vs Barthes) | Archéologie vs généalogie"],["Philosophie","Philosophie contemporaine","Derrida — Déconstruction","De la grammatologie (1967) | Logocentrisme : la parole préférée à l'écriture | Différance (avec 'a') : la signification est toujours différée | Déconstruction des oppositions binaires | 'Il n'y a pas de hors-texte'"],["Philosophie","Philosophie contemporaine","Lyotard — Postmodernité","La Condition postmoderne (1979) | Fin des grands récits (progrès, émancipation, marxisme) | Petits récits locaux | Différend : litige sans règle commune | Critique du consensus habermasien"],["Philosophie","Philosophie contemporaine","Bourdieu — Habitus et champ","La Distinction (1979) | Habitus : dispositions incorporées inconsciemment | Champ : espace social structuré | Capital : économique, culturel, social, symbolique | Reproduction sociale : les dominés participent à leur domination"],["Philosophie","Philosophie contemporaine","Rawls — Voile d'ignorance","Théorie de la justice (1971) | Position originelle : on ignore notre place dans la société | Voile d'ignorance → choix équitable | 2 principes : liberté égale + différence (inégalités justes si profitables aux plus défavorisés) | Contre l'utilitarisme"],["Philosophie","Philosophie contemporaine","Nozick — Libertarisme","Anarchie, État et Utopie (1974) | Contre Rawls | L'État minimal seul légitime | Droits naturels inviolables | Redistribution = violation de propriété | Wilt Chamberlain : l'échange libre justifie l'inégalité"],["Philosophie","Philosophie contemporaine","Habermas — Espace public","L'Espace public (1962) | Raison communicationnelle vs instrumentale | Agir communicationnel : accord par arguments | Démocratie délibérative | Éthique de la discussion : règles du débat rationnel"],["Philosophie","Philosophie contemporaine","Deleuze — Rhizome","Mille Plateaux (avec Guattari, 1980) | Rhizome vs arbre : multiplicité sans centre | Devenir : processus de transformation | Machine désirante | 'La philosophie crée des concepts'"],["Philosophie","Philosophie contemporaine","Deleuze — Différence et répétition","1968 | Philosophie de la différence : contre la pensée du même | Répétition ≠ généralité | Virtuel vs actuel | Critique de la représentation | Alternative à Hegel"],["Philosophie","Philosophie contemporaine","Butler — Performativité du genre","Trouble dans le genre (1990) | Le genre n'est pas une essence mais une performance | Répétition stylisée d'actes | Judith Butler : queer theory | 'Il n'y a pas de 'femme' avant son expression'"],["Philosophie","Philosophie contemporaine","Žižek — Idéologie","Le Sujet qui fâche (1999) | L'idéologie n'est pas une illusion mais une réalité qu'on perpétue | 'Ils savent ce qu'ils font mais ils le font quand même' | Lacan + Marx + Hegel | Critique du cynisme contemporain"],["Philosophie","Philosophie contemporaine","Baudrillard — Simulacres","Simulacres et simulation (1981) | Hyperréalité : le signe remplace la réalité | 4 phases de l'image | Désert du réel | The Matrix s'en inspire | Guerre du Golfe n'a pas eu lieu"],["Philosophie","Philosophie contemporaine","Freud — Structure de l'appareil psychique","Ça (pulsions) / Moi (réalité) / Surmoi (morale) | Principe de plaisir vs principe de réalité | Refoulement | Retour du refoulé : symptômes, rêves, lapsus | Révolution de la compréhension de soi"],["Philosophie","Philosophie contemporaine","Lacan — Le miroir","1936–1949 | Stade du miroir : 6–18 mois | L'enfant se reconnaît dans le miroir = formation du moi | Imaginaire / Symbolique / Réel | 'L'inconscient est structuré comme un langage' | Reformulation du freudisme"],["Philosophie","Philosophie contemporaine","Lévi-Strauss — Structures élémentaires","Les Structures élémentaires de la parenté (1949) | Prohibition de l'inceste : règle universelle | Passage nature-culture | Tristes Tropiques (1955) : critique de l'ethnocentrisme | Structuralisme anthropologique"],["Philosophie","Philosophie contemporaine","Althusser — Appareils idéologiques d'État","1970 | AIE : école, église, famille, médias... | À distinguer des Appareils répressifs d'État (armée, police) | Interpellation : 'Hé, vous là !' → le sujet se retourne | L'idéologie est matérielle | Althusser tue sa femme (1980) ; déclaré irresponsable"],["Philosophie","Philosophie contemporaine","Ricoeur — Herméneutique","1913–2005 | Philosophie du texte et du récit | Identité narrative : le soi comme récit | Temps et récit (3 vol.) | Conflit des interprétations | 'Le symbole donne à penser'"],["Philosophie","Philosophie contemporaine","Martha Nussbaum — Capabilités","née 1947 | Approche par les capabilités (avec Sen) | Liste de capabilités humaines fondamentales | Émotions dans la vie morale | Critique de l'utilitarisme | Cosmopolitisme"],["Philosophie","Philosophie contemporaine","Peter Singer — Éthique animale","né 1946 | La libération animale (1975) | Spécisme : discrimination par espèce = racisme | Utilitarisme des intérêts | 'La capacité à souffrir est le critère moral' | Fondateur de l'antispécisme"],["Philosophie","Philosophie contemporaine","Slavoj Žižek","né 1949 | Le Sujet qui fâche (1999) | 'Le capitalisme fonctionne mieux quand il se critique lui-même' | Analyse de la culture pop avec Lacan et Hegel | Provocation intellectuelle | 'L'idéologie idéale est sans idéologie'"],["Philosophie","Philosophie contemporaine","Philosophie analytique vs continentale","XXe s. | Analytique (UK, USA) : langage, logique, sciences | Frege, Russell, Wittgenstein, Quine | Continentale (France, Allemagne) : existence, histoire, critique sociale | Heidegger, Sartre, Derrida | Divorce depuis ~1950"],["Philosophie","Philosophie contemporaine","Philosophie de l'esprit — problème difficile","Chalmers (1995) | Problème difficile de la conscience : pourquoi y a-t-il quelque chose que c'est d'être soi ? | Qualia : l'expérience subjective | Dualisme des propriétés | Zombie philosophique : corps sans conscience | IA et conscience"],["Philosophie","Esthétique","Beau — Platon","Le beau absolu : Idée | Le Banquet : beauté corporelle → beauté âme → beauté morale → Beau en soi | Mimèsis : l'art imite les apparences des Idées (double éloignement) | Les poètes chassés de la République | Art dangereux car trompeur"],["Philosophie","Esthétique","Aristote — Catharsis","Poétique (~335 av. J.-C.) | Mimèsis : l'art imite la nature | Catharsis : purification des passions par la tragédie | Plaisir de la mimèsis : apprentissage | Contre Platon : l'art est utile"],["Philosophie","Esthétique","Kant — Jugement de goût","Critique de la faculté de juger (1790) | Beau = satisfaction désintéressée | Universel sans concept | 'C'est beau' ≠ 'Ça me plaît' | Libre jeu de l'imagination et de l'entendement"],["Philosophie","Esthétique","Kant — Le Sublime","Critique de la faculté de juger | Sublime mathématique (vastitude) vs sublime dynamique (puissance) | Sentiment de notre supériorité morale | Mer en tempête, montagne | Burke, Longin : précurseurs"],["Philosophie","Esthétique","Hegel — Mort de l'art","Leçons sur l'esthétique (1820s) | Art = manifestation sensible de l'Idée | Hiérarchie : architecture, sculpture, peinture, musique, poésie | 'L'art est pour nous une chose du passé' | L'esprit se réalise mieux dans la religion et la philosophie"],["Philosophie","Esthétique","Nietzsche — Apollinien/Dionysiaque","La Naissance de la tragédie (1872) | Apollinien : forme, mesure, rêve | Dionysiaque : ivresse, fusion, chaos | Grande art = synthèse | Wagner comme espoir (avant la rupture) | Socrate a tué le tragique grec"],["Philosophie","Esthétique","Benjamin — L'Aura","L'Œuvre d'art à l'époque de sa reproductibilité technique (1935) | Aura : présence unique ici et maintenant | Reproduction détruit l'aura | Cinéma et photographie : arts de masse | Potentiel politique de la perte d'aura"],["Philosophie","Esthétique","Adorno — Théorie esthétique","Théorie esthétique (1970, posthume) | L'art autonome résiste à l'industrie culturelle | L'art moderne comme négation | Schönberg vs jazz (controverse) | 'Écrire de la poésie après Auschwitz est barbare'"],["Philosophie","Esthétique","Industrie culturelle — Adorno et Horkheimer","Dialectique de la Raison (1944) | Industrie culturelle : standardisation des produits culturels | Culture de masse = manipulation | 'Toujours semblable et toujours différent' | Critique de la culture pop"],["Philosophie","Esthétique","Duchamp — Qu'est-ce que l'art ?","Fontaine (1917) | L'art = ce que l'artiste désigne comme art | 'Readymade' : objet quotidien élevé au statut d'art | Fin de la définition esthétique traditionnelle | Institutionnalisme : l'art défini par le monde de l'art"],["Philosophie","Esthétique","Théorie institutionnelle de l'art","Danto, Dickie (1960s–1980s) | Une œuvre est de l'art si le 'monde de l'art' la reconnaît | Artworld (Danto, 1964) | Après la fin de l'art : pluralisme | Warhol comme cas limite"],["Philosophie","Esthétique","Goodman — Langages de l'art","1968 | L'art comme système de symboles | Quand y a-t-il art ? | Autographique (peinture) vs allographique (musique) | Exemplification : l'œuvre montre ses propriétés | Contre l'esthétique traditionnelle"],["Philosophie","Esthétique","Merleau-Ponty — La Phénoménologie de la perception","1945 | Le corps propre : ni sujet pur ni objet | Perception incarnée | Cézanne's Doubt (1945) : le peintre rend visible le monde perçu | 'Le peintre 'pense' avec son corps'"],["Philosophie","Esthétique","Sartre — Qu'est-ce que la littérature ?","1948 | La prose s'engage ; la poésie non | L'écrivain est responsable de ce qu'il écrit | Littérature engagée | 'Chaque mot a un retentissement' | Contre l'art pour l'art"],["Philosophie","Esthétique","Barthes — La Mort de l'auteur","1968 | Le texte s'émancipe de l'auteur | La signification est produite par le lecteur | Contre la critique biographique | Naissance du lecteur = mort de l'auteur | Plaisir du texte (1973)"],["Philosophie","Esthétique","Umberto Eco — Œuvre ouverte","1962 | L'œuvre ouverte invite la coopération interprétative | Plusieurs lectures légitimes | Sémiotique : signes et codes | Le Nom de la rose (roman) | L'interprétation et la surinterpretation"],["Philosophie","Esthétique","Gadamer — Herméneutique","Vérité et méthode (1960) | L'art révèle une vérité que la science ne peut donner | Cercle herméneutique : compréhension circulaire | Fusion des horizons | L'interprétation change le lecteur"],["Philosophie","Esthétique","Schiller — Éducation esthétique","Lettres sur l'éducation esthétique de l'homme (1795) | Le jeu = activité proprement humaine | 'L'homme n'est pleinement homme que lorsqu'il joue' | La beauté comme réconciliation de nature et liberté | Art comme émancipation"],["Philosophie","Esthétique","Croce — Expression et intuition","1866–1952 | L'art = intuition pure avant toute conceptualisation | Pas de différence entre intuition et expression | L'œuvre existe entièrement dans l'esprit | Idéalisme esthétique | Fondateur de l'esthétique italienne moderne"],["Philosophie","Esthétique","Souriau — Modes d'existence","1892–1979 | L'Instauration philosophique | Différents modes d'existence : physique, phénoménologique, réique, fictif | Œuvre d'art comme mode d'existence propre | Repris par Latour | Ontologie pluraliste"],["Littérature","Théorie littéraire","Aristote — Poétique","~335 av. J.-C. | Mimèsis ; catharsis ; hamartia | Tragédie : action sérieuse, complète, d'une certaine étendue | Unité d'action | Le vraisemblable préféré au vrai | Fondation de la critique littéraire"],["Littérature","Théorie littéraire","Boileau — Art poétique","1674 | 'Ce qui se conçoit bien s'énonce clairement' | Règles du classicisme français | Unités ; vraisemblance ; bienséances | Raison et mesure | 'Aimez donc la raison'"],["Littérature","Théorie littéraire","Formalisme russe","1915–1930 | Jakobson, Chklovski | Littérarité : ce qui fait qu'un texte est littéraire | Défamiliarisation : rendre étrange le quotidien | Fabula vs sjuzet | Renouveau de la narratologie"],["Littérature","Théorie littéraire","Bakhtine — Dialogisme","1895–1975 | Tous les mots sont habités par d'autres voix | Roman polyphonique (Dostoïevski) | Carnaval : renversement temporaire des hiérarchies | Chronotope : espace-temps du roman | L'Enoncé est toujours social"],["Littérature","Théorie littéraire","Structuralisme — Saussure","Cours de linguistique générale (1916, posthume) | Langue = système de différences | Signifiant / signifié ; signe arbitraire | Synchronie vs diachronie | Fondement du structuralisme littéraire"],["Littérature","Théorie littéraire","Genette — Narratologie","Figures III (1972) | Récit, histoire, narration | Focalisation : zéro, interne, externe | Analepse / prolepse | Voix narrative | Métalepse"],["Littérature","Théorie littéraire","Barthes — S/Z","1970 | Analyse de Sarrasine (Balzac) | 5 codes : herméneutique, proaïrétique, sémique, symbolique, référentiel | Texte lisible vs scriptible | Pluralité du texte"],["Littérature","Théorie littéraire","Ricœur — Temps et récit","3 volumes (1983–1985) | Mimèsis I, II, III : préfiguration, configuration, refiguration | Le récit comme médiation entre temps vécu et temps raconté | Identité narrative | L'homme : animal qui se raconte"],["Littérature","Théorie littéraire","Freud et la littérature","Malaise dans la civilisation (1930) | L'écrivain comme névrosé sublimé | Uncanny (inquiétante étrangeté) | L'interprétation des rêves → l'inconscient dans l'œuvre | Œdipe et Hamlet"],["Littérature","Théorie littéraire","Bloom — L'anxiété de l'influence","1973 | Tout grand poète lutte contre ses précurseurs | 6 stratégies de révision | Clinamen, tessera, kenosis... | L'originalité comme malentente productive | Canon occidental"],["Littérature","Grandes oeuvres","La Divine Comédie — Dante","1308–1321 | Voyage dans l'au-delà | Enfer (9 cercles) ; Purgatoire (7 terrasses) ; Paradis (9 sphères) | Guide : Virgile puis Béatrice | Synthèse médiévale | Fondation de la langue italienne"],["Littérature","Grandes oeuvres","Don Quichotte — Cervantes","1605–1615 | Premier roman moderne | Idéalisme vs pragmatisme | Dulcinée comme illusion | 'Sancho Pança' : bon sens populaire | Mise en abyme dès le tome II"],["Littérature","Grandes oeuvres","Hamlet — Shakespeare","~1600–1601 | 'Être ou ne pas être, telle est la question' | Hésitation à venger le père | Folie feinte ou réelle ? | Le théâtre dans le théâtre | Complexe d'Hamlet : angoisse existentielle"],["Littérature","Grandes oeuvres","Faust — Goethe","1808–1832 | Pacte avec Méphistophélès | 'Je suis l'esprit qui toujours nie' | Quête de la connaissance absolue | 'Que toute théorie est grise, mais que l'arbre de la vie est d'un vert éternel' | Saved by eternal feminine"],["Littérature","Grandes oeuvres","Les Fleurs du Mal — Baudelaire","1857 | Spleen et Idéal | 'Hypocrite lecteur, — mon semblable, — mon frère !' | Correspondances | Invitation au voyage | Procès pour obscénité ; 6 poèmes condamnés"],["Littérature","Grandes oeuvres","Madame Bovary — Flaubert","1857 | Emma Bovary : bovarysme (se croire autre que l'on est) | Style indirect libre | 'Madame Bovary c'est moi' | Procès pour immoralité (acquitté) | Réalisme stylistique"],["Littérature","Grandes oeuvres","Guerre et Paix — Tolstoï","1869 | ~1 300 pages ; ~580 personnages | 1805–1812 : guerres napoléoniennes | Pierre Bezoukhov, Natasha, Andreï Bolkonsky | 'La seule force capable de vaincre Napoléon : l'esprit du peuple' | Essai philosophique intégré"],["Littérature","Grandes oeuvres","Les Frères Karamazov — Dostoïevski","1880 | Quatrième roman ; œuvre testamentaire | Fyodor tué par ses fils | La légende du Grand Inquisiteur (Ivan vs Jésus) | Foi vs raison | 'Si Dieu n'existe pas, tout est permis'"],["Littérature","Grandes oeuvres","À la recherche du temps perdu — Proust","1913–1927 | 7 volumes ; ~3 000 pages | Mémoire involontaire : madeleine | Le temps retrouvé : l'art comme salut | Style : phrase longue, digressions | 'La vraie vie, la vie enfin découverte et éclaircie, c'est la littérature'"],["Littérature","Grandes oeuvres","Ulysse — Joyce","1922 | 18 épisodes ; 16 juin 1904 à Dublin | Monologue intérieur de Bloom et Molly | Stream of consciousness | 'Oui je dirai oui' (dernier mot) | Roman le plus influent du XXe s."],["Littérature","Grandes oeuvres","La Métamorphose — Kafka","1915 | Gregor Samsa se réveille transformé en insecte | Aliénation familiale et professionnelle | Absurde bureaucratique | L'impossible communication | 'Kafkaïen' dans le langage courant"],["Littérature","Grandes oeuvres","Mrs Dalloway — Woolf","1925 | Une seule journée à Londres | Stream of consciousness entre Clarissa et Septimus | Temps intérieur vs Big Ben | 'Ordinary moments' | 'Comment capturer l'instant qui s'enfuit ?'"],["Littérature","Grandes oeuvres","1984 — Orwell","1949 | Océania ; Big Brother ; Parti | Novlangue (Newspeak) : réduire la pensée | Ministère de la Vérité (mensonge) | '2+2=5' si le Parti le dit | Doublethink : deux contradictions simultanées"],["Littérature","Grandes oeuvres","L'Étranger — Camus","1942 | Meursault tue un Arabe sans raison claire | Indifférence au monde | Procès : jugé pour ne pas avoir pleuré à l'enterrement de sa mère | 'Aujourd'hui, maman est morte' | Absurde comme style"],["Littérature","Grandes oeuvres","En attendant Godot — Beckett","1953 | Vladimir et Estragon attendent Godot qui ne vient jamais | Théâtre de l'absurde | Silence et répétition | 'On ne peut pas partir' / 'Alors on y va' / Ils ne bougent pas | 'Rate encore. Rate mieux'"],["Littérature","Grandes oeuvres","Cent ans de solitude — García Márquez","1967 | Famille Buendía ; Macondo | Réalisme magique : le quotidien et le miraculeux mêlés | 6 générations ; cercle du destin | 'La primera de la estirpe...' | Prix Nobel 1982"],["Littérature","Grandes oeuvres","Le Procès — Kafka","1925 (posthume) | Josef K. arrêté sans raison | Bureaucratie absurde et opaque | 'Quelqu'un devait avoir calomnié Josef K.' | Kafkaïen | La loi inaccessible"],["Littérature","Grandes oeuvres","Phèdre — Racine","1677 | Phèdre aime son beau-fils Hippolyte | Passion coupable et destin | Jansénisme : la grâce divine absente | 'C'est Vénus tout entière à sa proie attachée' | Chef-d'œuvre du classicisme"],["Littérature","Grandes oeuvres","Les Misérables — Hugo","1862 | Jean Valjean ; Cosette ; Javert ; Gavroche | Rédemption sociale | Thèse : la misère fait les criminels | Digressions historiques (Waterloo, égouts de Paris) | Roman-somme du XIXe s."],["Littérature","Grandes oeuvres","Moby Dick — Melville","1851 | Le capitaine Achab contre la baleine blanche | Obsession, destin, mal absolu | Ismaël, narrateur | 'Appelez-moi Ismaël' | Symbolisme américain"],["Littérature","Grandes oeuvres","Crime et Châtiment — Dostoïevski","1866 | Raskolnikov tue la prêteuse sur gage | Théorie du crime 'légitime' (Napoléon) | Culpabilité et rédemption | Sonia Marmeladova : foi | Confession finale"],["Littérature","Grandes oeuvres","L'Odyssée — Homère","~VIIIe s. av. J.-C. | 10 ans de retour d'Ulysse | 24 chants | Sirènes, Cyclope, Circé, Calypso | Pénélope : fidélité et ruse | Nostos : retour | Fondement de la littérature occidentale"],["Littérature","Grandes oeuvres","Le Maître et Marguerite — Boulgakov","1966 (posthume) | Moscou soviétique envahie par le Diable | Roman dans le roman : Pilate et Jésus | Satire du régime soviétique | Woland (Diable) plus humain que les humains | 'Les manuscrits ne brûlent pas'"],["Littérature","Grandes oeuvres","Cahier d'un retour au pays natal — Césaire","1939 | Fondement de la Négritude | Prose poétique | Révolte contre la colonisation | 'Ma bouche sera la bouche des malheurs qui n'ont point de bouche' | Martinique comme symbole de l'aliénation coloniale"],["Littérature","Grandes oeuvres","Le Deuxième Sexe — Beauvoir","1949 | 'On ne naît pas femme, on le devient' | Altérité radicale de la femme | Analyse historique, mythologique, psychanalytique | Scandale à sa publication | Fondement du féminisme philosophique"],["Art","Art antique","Art grec — ordres architecturaux","Dorique : sobre, sans base (Parthénon) | Ionique : volutes, plus orné (Érechthéion) | Corinthien : chapiteaux à feuilles d'acanthe | Entasis : légère courbure des colonnes (correction optique) | Perfection géométrique"],["Art","Art antique","Phidias — statue de Zeus et Athéna","~490–430 av. J.-C. | Superviseur des arts sous Périclès | Athéna Parthénos : 12m en or et ivoire (disparue) | Zeus d'Olympie : 7e merveille du monde (disparue) | Idéal de beauté grecque"],["Art","Art antique","Art romain — mosaïques et fresques","Ier s. av. J.-C. – IVe s. apr. J.-C. | Villa des Mystères (Pompéi) : fresques initiatiques | Mosaïque : genre romain par excellence | Portrait du Fayoum : réalisme | Copie de sculptures grecques"],["Art","Art antique","Art égyptien — canon et symbolisme","~3 000 av. J.-C. – IVe s. | Canon de 18 poings | Représentation simultanée (face + profil) | Hiérarchie de taille selon l'importance | Or : chair des dieux | Hieroglyphes = langue sacrée des images"],["Art","Renaissance","Brunelleschi — perspective linéaire","1420 | Démontre la perspective via des panneaux percés | Révolution dans la représentation de l'espace | Coupole de Florence (1436) : prouesse technique | Fondation de l'architecture Renaissance"],["Art","Renaissance","Leon Battista Alberti","1404–1472 | Traité De Pictura (1435) : codifie la perspective | De Re Aedificatoria : architecture | 'L'architecte est le prince des arts' | Façade de Santa Maria Novella (Florence)"],["Art","Renaissance","Léonard de Vinci","1452–1519 | La Joconde (~1503) : sfumato ; regard énigmatique | La Cène (1495–1498) : perspective et psychologie | Carnets : anatomie, inventions | 'La peinture est chose mentale'"],["Art","Renaissance","Michel-Ange — Sixtine","Chapelle Sixtine (1508–1512) | Plafond : 9 scènes de la Genèse ; La Création d'Adam | Jugement dernier (1536–1541) | Peintre à contrecœur (se dit sculpteur) | Titan de la Renaissance"],["Art","Renaissance","Titien","~1490–1576 | Maître de la couleur vénitienne | Assomption de la Vierge ; Amour sacré et Amour profane | Portrait de Charles Quint | 'La couleur est la touche finale du peintre'"],["Art","Baroque","Caravage","1571–1610 | Ténébrisme : clair-obscur radical | Vocation de saint Matthieu (1600) | Réalisme des sujets (pieds sales des saints) | Fuite perpétuelle après un meurtre | Révolutionne la peinture européenne"],["Art","Baroque","Rembrandt","1606–1669 | La Ronde de nuit (1642) : lumière intérieure | 100 autoportraits (self-examination) | Eaux-fortes : maître de la gravure | 'La lumière vient de l'intérieur' | Faillite en 1656"],["Art","Baroque","Vélazquez — Les Ménines","1656 | Tableau le plus commenté de l'histoire de l'art | Mise en abyme : le peintre se peint dans son tableau | Regard du spectateur | Foucault ouvre Les Mots et les Choses avec ce tableau | 'Chef-d'œuvre absolu'"],["Art","Baroque","Rubens","1577–1640 | Baroque flamand ; exubérance | Le Massacre des Innocents ; Les Trois Grâces | Diplomate-peintre | Atelier de 100 assistants | Canon rubénien : femmes pulpeuses"],["Art","Baroque","Bernin — sculpture baroque","1598–1680 | L'Extase de sainte Thérèse (1652) : marbre comme tissu et lumière | Apollon et Daphné | Colonnade de Saint-Pierre | Baroque au service du Contre-Réforme"],["Art","Néoclassicisme/Romantisme","David — Néoclassicisme","1748–1825 | Le Serment des Horaces (1784) | La Mort de Marat (1793) | Peintre officiel de Napoléon | Vertu républicaine et stoïcisme | Esthétique révolutionnaire"],["Art","Néoclassicisme/Romantisme","Géricault — Le Radeau de la Méduse","1819 | Naufrage de la Méduse (1816) : scandale politique | Pyramide de corps | Lumière de Turner, composition baroque | Réalisme des cadavres (Géricault les étudie) | Fondation du romantisme"],["Art","Néoclassicisme/Romantisme","Delacroix — La Liberté","La Liberté guidant le peuple (1830) | Révolution de juillet | 'Marianne' mi-allégorie mi-femme du peuple | Couleurs chaudes ; diagonal | Romantisme français"],["Art","Néoclassicisme/Romantisme","Caspar David Friedrich","1774–1840 | Romantisme allemand | Voyageur contemplant une mer de nuages (1818) | Dos tourné : invitation à entrer dans le tableau | Sublime nature | Mélancolie protestante"],["Art","Néoclassicisme/Romantisme","Turner — le Sublime","1775–1851 | Peintre du sublime anglais | Lumière et atmosphère | Tempête de neige (1842) | 'Vortex of colour' | Précurseur de l'impressionnisme"],["Art","Impressionnisme","Monet — série des Nymphéas","1896–1926 | Grande Décoration : 8 panneaux, Orangerie de Paris | Dissolution de la forme dans la lumière | Étangs de Giverny | 'Mon plus beau chef-d'œuvre est mon jardin' | Art = perception, pas objet"],["Art","Impressionnisme","Renoir","1841–1919 | Le Moulin de la Galette (1876) | Lumière dappled sur la peau | Joie de vivre | 'La souffrance passe, la beauté reste' | Arthrite : peint le pinceau attaché à la main"],["Art","Impressionnisme","Degas","1834–1917 | Danseuses ; courses de chevaux ; femmes au bain | Angle de vue décalé | Pastel | 'L'art n'est pas ce qu'on voit mais ce qu'on fait voir aux autres'"],["Art","Post-impressionnisme","Cézanne — géométrie","'Tout dans la nature se modèle selon la sphère, le cône, le cylindre' | Montagne Sainte-Victoire (60+ versions) | Applanissement de la perspective | 'Père de l'art moderne' | Influence directe sur le cubisme"],["Art","Post-impressionnisme","Van Gogh — Nuit étoilée","1889 | Peint à l'asile de Saint-Rémy | Tourbillons ; couleurs expressives | Lettres à Theo : théorie de la peinture | 900 tableaux en 10 ans | 1 seul vendu de son vivant"],["Art","Post-impressionnisme","Gauguin — Tahiti","'D'où venons-nous ? Que sommes-nous ? Où allons-nous ?' (1897) | Fuit 'la pourriture de la civilisation' | Couleurs symboliques ; aplats | Primitivisme | 'Le Paradis perdu retrouvé ?'"],["Art","Post-impressionnisme","Seurat — Pointillisme","1859–1891 | Un dimanche à la Grande Jatte (1886) | Divisionnisme : pures taches de couleur | Théorie des couleurs (Chevreul) | Influence néo-impressionniste"],["Art","Art moderne","Klimt — Symbolisme viennois","1862–1918 | Le Baiser (1907–1908) | Or et ornement | Sécession viennoise (1897) | Freud et Klimt : Vienne fin de siècle | Portrait d'Adele Bloch-Bauer : vendu 135 M$ (2006)"],["Art","Art moderne","Munch — Le Cri","1893 | 4 versions | 'Je sentis un cri infini se propager à travers la nature' | Anxiété existentielle | Expressionnisme norvégien | Fond rouge-sang ; figure déformée"],["Art","Art moderne","Picasso — Guernica","1937 | Bombardement de Guernica (Espagne) par les nazis | Noir, blanc, gris | 'La peinture n'est pas faite pour décorer les appartements' | Gardée par le MoMA ; rendue à l'Espagne démocratique (1981)"],["Art","Art moderne","Matisse — La Danse","La Danse (1909) | 5 corps nus en cercle | Couleurs pures | 'Couper dans la couleur' : papiers découpés | 'Ce que je rêve c'est un art d'équilibre, de pureté'"],["Art","Art moderne","Kandinsky — abstraction","1866–1944 | Première aquarelle abstraite (1910) | Synesthésie : couleurs = sons | Über das Geistige in der Kunst (1911) | Bauhaus | 'La couleur est une force qui influence directement l'âme'"],["Art","Art moderne","Malevitch — Suprématisme","1879–1935 | Carré blanc sur fond blanc (1918) | Suprématisme : formes géométriques pures | Art sans référence au monde | 'Libérer l'art du poids du monde objectif'"],["Art","Art moderne","Mondrian — De Stijl","1872–1944 | Lignes noires horizontales et verticales | Couleurs primaires + blanc et noir | De Stijl avec Theo van Doesburg | 'L'art universel' au-delà du particulier"],["Art","Art moderne","Dalí — La Persistance de la mémoire","1931 | Montres molles | Paysage de Cap Creus (Catalogne) | Méthode paranoïaque-critique | 'La seule différence entre moi et un fou est que moi je ne suis pas fou'"],["Art","Art moderne","Magritte — Trahison des images","'Ceci n'est pas une pipe' (La Trahison des images, 1929) | La représentation ≠ la chose | Le Fils de l'homme (1964) : visage caché par pomme | 'Tout ce que nous voyons cache autre chose'"],["Art","Art moderne","Kahlo — Autoportraits","1907–1954 | 55 autoportraits sur 143 œuvres | 'Je peins ma propre réalité' | Accident (1925) : corps brisé | Union avec Diego Rivera | Féminisme, identité mexicaine, surréalisme refusé"],["Art","Art contemporain","Pollock — Action Painting","No. 5 (1948) : 140 M$ (2006) | Dripping : peinture déposée par mouvements gestuels | 'Je suis dans le tableau' | All-over : pas de centre | Greenberg théorise l'expressionnisme abstrait"],["Art","Art contemporain","Rothko — Couleur et transcendance","1903–1970 | Rectangles flottants de couleur | 'Je ne suis pas intéressé par les relations de couleur. Je suis intéressé par la tragédie humaine' | Chapelle Rothko (Houston) | Suicide en 1970"],["Art","Art contemporain","Warhol — Pop Art","Campbell's Soup Cans (1962) ; Marilyn Diptych (1962) | 'Dans le futur, tout le monde sera célèbre 15 minutes' | Factory : production industrielle d'art | Art et commerce | 'Business art is the step that comes after art'"],["Art","Art contemporain","Basquiat","1960–1988 | SAMO graffiti à New York | Néo-expressionnisme ; race et société | Crane, Untitled | Amitié avec Warhol | Overdose à 27 ans ; tableau vendu 110,5 M$ (2017)"],["Art","Art contemporain","Koons — Kitsch élevé","né 1955 | Balloon Dog ; Bunny | Acier inoxydable réfléchissant | 'L'art c'est la communication' | Vendu au prix le plus cher d'un artiste vivant | Kitsch assumé comme esthétique"],["Art","Art contemporain","Ai Weiwei","né 1957 | Dropping a Han Dynasty Urn (1995) | Sunflower Seeds (Tate, 2010) | Détenu 81 jours (2011) | Art comme militantisme | '1001 chaises Ming' : mémoire et consommation"],["Art","Art contemporain","Louise Bourgeois","1911–2010 | Maman (araignée géante, 9m) | 'Mon art est une garantie de santé mentale' | Sculpture biographique | Cellules | Reconnue à 70 ans (MoMA rétrospective, 1982)"],["Art","Art contemporain","Damien Hirst","né 1965 | For the Love of God : crâne incrusté de diamants (50 M£) | The Physical Impossibility of Death in the Mind of Someone Living (requin) | YBA (Young British Artists) | Art et mort"],["Art","Art contemporain","Marina Abramović","née 1946 | Art performance | The Artist is Present (MoMA, 2010) : 736h immobile | Rhythm 0 : couteaux, pistolet | 'La performance n'est pas théâtre'"],["Art","Photographie","Nadar","1820–1910 | Portraits de Baudelaire, Hugo, Nadar | 1re photo aérienne (1858) | Studio : lieu de rencontre | Prête son studio à la 1re expo impressionniste (1874)"],["Art","Photographie","Cartier-Bresson — L'instant décisif","1908–2004 | 'L'instant décisif' : le moment parfait | Leica discret | Fondateur de Magnum (1947) | 'Ton œil, ton esprit et ton cœur doivent être dans le même axe'"],["Art","Photographie","Cindy Sherman","née 1954 | Untitled Film Stills : se photographie dans des rôles | Critique de la représentation de la femme | Post-féminisme | Appropriationnisme"],["Art","Cinéma-philosophie","Tarkovski — poésie du temps","1932–1986 | Stalker ; Le Miroir ; Andrei Roublev | 'Sculpter le temps' | Plan-séquence long | Sens et spiritualité contre la narration commerciale | 'Le cinéma est le seul art du temps'"],["Art","Cinéma-philosophie","Godard — politique du cinéma","1930–2022 | À bout de souffle (1960) : faux raccord assumé | Politique des auteurs | 'Le cinéma c'est 24 vérités par seconde' | Militantisme (1968) | 'Ce n'est pas une image juste, c'est juste une image'"],["Art","Musique-philosophie","Bach et la polyphonie","1685–1750 | Contrepoint : plusieurs voix indépendantes | L'Art de la fugue | 'La musique est la langue que peut parler l'homme quand les mots ne lui suffisent plus' | Redécouvert par Mendelssohn (1829)"],["Art","Musique-philosophie","Wagner et Nietzsche","1813–1883 / 1844–1900 | Nietzsche admirateur puis critique | 'Wagner est une maladie' (Nietzsche, 1888) | Gesamtkunstwerk : œuvre d'art totale | Antisémitisme de Wagner ; récupération nazie | Schopenhauer comme arrière-fond"],["Art","Musique-philosophie","John Cage — silence","1912–1992 | 4'33 (1952) : 4 minutes 33 secondes de silence | 'Tout son peut être musique' | Aléatoire ; I Ching | 'Le silence n'existe pas' (chambre anéchoïque) | Fondateur de la musique expérimentale"],["Art","Musique-philosophie","Schoenberg — révolution atonale","1874–1951 | Abandon de la tonalité (~1908) | Dodécaphonisme : série de 12 sons | Moses und Aron (opéra) | 'Je n'ai fait qu'obéir à une nécessité intérieure' | Berg et Webern : École de Vienne"],["Philosophie","Philosophie contemporaine","Francis Wolff — Utopie cosmopolitique","Trois Utopies Contemporaines (2017) | 3 utopies : posthumanisme, animalisme, cosmopolitisme | Les deux premières franchissent des barrières naturelles ; le cosmopolitisme franchit une barrière artificielle : les frontières | Thèse : la construction d'un monde commun passe par l'utopie cosmopolitique | Citation : «L'utopie cosmopolitique est révolutionnaire, elle absolutise les principes de l'humanisme pour en réaliser l'idée»"],["Philosophie","Philosophie contemporaine","Francis Wolff — L'étranger et la frontière","Trois Utopies Contemporaines (2017) | Les nations sont une communauté politique imaginaire alimentant la dialectique du «eux» et du «nous» | L'extranéité (le fait d'être étranger) est produite par la frontière, non par la nature ou l'histoire | Citation : «L'étranger n'est pas l'effet de la nature ni même de l'histoire, il est le produit de la frontière» | Dépasse le cosmopolitisme kantien : vise la suppression des États et une citoyenneté mondiale"],["Philosophie","Philosophie contemporaine","Myriam Revault d'Allonnes — Institution et monde commun","Le Pouvoir des commencements (2006) | Thèse : l'intersubjectivité seule ne suffit pas à élaborer un monde commun ; l'institution est nécessaire | L'institution «structure un monde qui préexiste et survit à chaque génération» | S'appuie sur Merleau-Ponty (cours 1954-1955) : l'institution dépose en nous un sens «comme appel à une suite, exigence d'un avenir» | L'école et la famille : institutions par excellence permettant à l'enfant de s'insérer dans un monde qui le précède"],["Littérature","Grandes oeuvres","Balzac — La Comédie Humaine comme monde total","La Comédie Humaine (1829-1850) | 90+ œuvres ; 2000+ personnages récurrents | Rastignac du Père Goriot (1834) réapparaît dans Illusions perdues (1837) et Splendeurs et misères (1838) | Strates sociales : noblesse du Faubourg Saint-Germain, bourgeoisie, demi-monde (artistes, prostitués) | Unité géographique : Paris + province (Alençon, Sancerre…) | Citation : «Mon ouvrage a sa géographie, sa généalogie, ses familles, ses lieux, ses personnages et ses faits»"],["Philosophie","Philosophie contemporaine","Hartmut Rosa — Indisponibilité et résonance","Rendre le monde indisponible (2018) | Thèse paradoxale : à trop vouloir rendre le monde disponible (connaissable, accessible, maîtrisable, utilisable), on le rend indisponible | La résonance : expérience en 4 étapes — contact, efficacité personnelle, assimilation, indisponibilité | La résonance échappe à tout contrôle | Exemple du chat : il a de la valeur car il peut aussi griffer ; un robot ronronnant perdrait toute résonance | La résonance est une solution contre notre rapport d'agression sur le monde"],["Philosophie","Esthétique","Gilles Lipovetsky — Capitalisme artiste et esthétisation du monde","L'esthétisation du monde (2013), avec Jean Serroy | «Capitalisme artiste transesthétique» : création de valeur économique à partir de la valeur esthétique et expérientielle | Design et relooking comme habitudes sociétales : «L'amour de la décoration est devenu une passion individualiste de masse» | Société de l'hyperspectacle : théâtralisation des centres commerciaux | Citation : «Partout le réel se construit comme une image en y intégrant une dimension esthétique-émotionnelle» | Le monde construit autour de nous n'est que la projection de l'image que nous nous faisons de nous-mêmes"],["Philosophie","Philosophie contemporaine","Fethi Benslama — Révocation subjective et Kulturarbeit","La psychanalyse à l'épreuve de l'islam (2002) | Distinction modernité (rupture longue en Occident, accompagnée de productions artistiques) vs modernisme (rupture brève dans le monde arabo-musulman, sans travail culturel) | Le modernisme entraîne une révocation subjective : «formes de destitutions massives lorsque les conditions du monde ne se laissent plus appréhender par les repères de vérité de la subjectivité» | Kulturarbeit (travail culturel) manquant → perte du monde → entrée dans l'immonde | La radicalisation islamiste : «cri de révolte» face aux mutations du monde | L'art peut pallier cette révocation subjective"],["Philosophie","Philosophie contemporaine","Jean-Luc Nancy — Mondialisation et immonde","La création du monde ou la mondialisation (2002) | Paradoxe : la mondialisation, censée faire monde, incarne une désintégration du monde | Citation : «Le monde a perdu sa capacité de faire monde : il semble avoir gagné seulement celle de multiplier à la puissance de ses moyens une prolifération de l'immonde» | Les populations entrent dans une logique de ségrégation plutôt que d'homogénéisation"],["Philosophie","Philosophie contemporaine","Jean-Luc Nancy — Praxis et sens du monde","Le sens du monde (1993) | Face à la perte du monde, reprend la formule marxiste : «Il ne s'agit plus d'interpréter le monde, mais de le transformer» | Cette transformation passe par la praxis (action réflexive) et non la poiesis (production technique) | Travailler à l'idée de sens du monde = se transformer soi-même en tant qu'individu et collectif | Solution : réfléchir à nos pratiques pour trouver un sens de l'existence capable de faire bouger les choses"],["Philosophie","Philosophie contemporaine","Christopher Lasch — Narcissisme et moi assiégé","Le Moi assiégé (1984) ; La Culture du Narcissisme (1979) | L'individu moderne ressemble à Narcisse : non celui d'Ovide, mais un Narcisse vide en constante recherche d'approbation cherchant à «survire» dans un monde hostile | Banalisation du langage extrémiste (massacre, génocide) → «identification par procuration» aux victimes | Le Moi forme un noyau défensif face au monde | La bureaucratie moderne : lieu de développement du narcissisme, où l'autorité disparaît et le Surmoi est livré à lui-même → forte anxiété | Conséquence : rétractation du monde subjectif"],["Philosophie","Philosophie contemporaine","Camus — Le Mythe de Sisyphe (version cours)","Le Mythe de Sisyphe (1942) | Citation : «L'absurde naît de cette confrontation entre l'appel humain et le silence déraisonnable du monde» | Sisyphe : condamné à rouler un rocher indéfiniment, symbole de l'absurdité | 3 réponses possibles : Dieu, suicide, révolte → Camus récuse les deux premières | La révolte : lucidité face à l'absurdité, accepter le non-sens sans le fuir | Citation : «La lutte elle-même vers les sommets suffit à remplir le cœur d'un homme, il faut imaginer Sisyphe heureux»"],["Philosophie","Philosophie contemporaine","Markus Gabriel — Pourquoi le monde n'existe pas","Pourquoi le monde n'existe pas (2013) | Thèse : le monde n'existe pas car il serait «le champ de sens de tous les champs de sens» — or une chose n'existe que si elle apparaît dans une entité totale, ce que le monde ne peut faire en son propre sein | Champ de sens : lieu où quelque chose apparaît | Il y a une scission entre la pensée des faits (conceptions) et les faits en soi | La religion nous déresponsabilise en répondant à toutes nos questions ; la philosophie invite à comprendre par la réflexion | Ne pas chercher de «structure fondamentale englobante» mais comprendre les champs de sens qui se présentent"],["Littérature","Grandes oeuvres","Zola — Germinal et la transformation collective du monde","Germinal (1885) | Étienne Lantier : conscience de l'exploitation → grèves massives → sortir de la résignation | Citation Marx/Engels (Manifeste, 1848) : «Les prolétaires n'ont à perdre que leurs chaînes ; ils ont un monde à gagner» | La grève radicalise le mouvement : réformistes → révolutionnaires | Propagation aux mines voisines ; dimension internationale (Pluchart) | Limite du collectif : se transforme en masse + individualisme anarchiste de Souvarine qui fait sauter la mine | Thèse : plusieurs manières de transformer collectivement le monde"],["Philosophie","Philosophie contemporaine","Hannah Arendt — Désert et oasis politiques","Qu'est-ce que la politique ? (1993, posthume) | L'activité politique suppose la participation active des citoyens dans la sphère publique pour façonner le monde commun | Métaphore : les oasis = espaces communs où la créativité est encore possible ; le désert = destruction des espaces communs | Danger principal : «que nous devenions de véritables habitants du désert et que nous nous sentions bien chez lui» | Le désintérêt pour la politique rend les hommes superflus | L'existence humaine sans la politique se réduit à la seule dimension naturelle du vivre"],["Philosophie","Philosophie contemporaine","Robert Harrison — Jardins comme maquettes de monde","Jardins, une histoire buissonnière (2008) | Les jardins sont des maquettes de monde qui expriment la vision du monde de leur créateur | Jardins de Versailles : volonté de domination de Louis XIV | Jardins de Roberto Rossi (Florence) : lieu des décisions politiques humanistes | Citation du peintre japonais Shonin : «L'œuvre d'un œil qui laissant les preuves de son génie en a emporté à jamais le secret» | Face à l'hostilité du monde : le jardin permet de «réenchanter le présent» | Académie de Platon : loin de la cité, près de la raison → planter les graines de la réflexion"],["Philosophie","Philosophie moderne","Nietzsche — Le Gai Savoir et les arrière-mondes","Le Gai Savoir (1882), aphorismes 344 et 372 | Critique du scientisme : «Voulons-nous vraiment abaisser l'existence à un exercice de calcul, à un petit pensum pour mathématiciens ?» | Chercher la vérité rationnelle, c'est rêver d'un «autre monde», négation du monde sensible | Critique des philosophes idéalistes (Platon) qui, attirés par «le froid royaume des idées», «niaient la musique de la vie» | Celui qui invente l'«autre monde» est dépressif, pas assez vital | Solution : appréhender le monde avec ses sens ; les hommes nouveaux se mettent en quête de la «grande santé»"],["Littérature","Grandes oeuvres","Baudelaire — Spleen et Idéal : le monde comme représentation subjective","Les Fleurs du Mal (1857), section «Spleen et Idéal» | Thèse : notre monde n'est que la représentation que nous nous en faisons | «La Vie antérieure» : monde beau et lumineux → Baudelaire heureux | «Spleen» : «Quand le ciel bas et lourd pèse comme un couvercle / Sur l'esprit gémissant en proie aux longs ennuis» → monde atroce | Même monde physique, représentation radicalement différente selon l'état intérieur | Les sensations et sentiments de l'individu influent sur sa vision du monde"],["Philosophie","Philosophie contemporaine","Heidegger — Bâtir, Habiter, Penser (1951)","Conférence de 1951 | «Buan» (vieil allemand : habiter) = «bin» (je suis) → habiter c'est être | Citation : «La façon dont tu es et dont je suis, la manière dont nous autres hommes sommes sur Terre est l'habitation. Être homme, c'est être sur Terre comme mortel» | Heimatlosigkeit : situation moderne où les hommes confondent logement et habitation | L'homme est Weltbildend (configurateur du monde) : il fait son monde | La crise du logement n'est pas un manque de logements mais une crise de l'habitation | Il faut d'abord penser la façon d'habiter, puis construire"],["Philosophie","Philosophie contemporaine","Merleau-Ponty — Intersubjectivité et chair du monde","Phénoménologie de la perception (1945) ; Le visible et l'invisible (1988, posthume) | L'intersubjectivité : subjectivité à «parts égales» qui prend acte de la subjectivité d'autrui | Dès qu'un signe est exprimé, la communication devient possible ; les consciences sont «inter-pénétrables» | Le corps n'est pas un objet parmi d'autres : il est la condition fondamentale de l'expérience du monde | «Foi perceptive» : l'existence du monde est éprouvée avant toute interrogation | «Chair du monde» : notre peau est aussi la peau du monde ; le corps est fait de la même texture que le monde"],["Philosophie","Philosophie moderne","Bergson — Langage, art et origine du monde","Le Rire (1900) ; La Pensée et le mouvant (1934) | Le langage est un système symbolique qui réduit notre perception à une représentation conventionnelle → prive d'accès à l'essence des choses | L'art offre une alternative : l'artiste saisit l'âme des objets par sensibilité et intuition, transcendant les limites du langage | Lien avec Proust : «la vraie vie, la vie pleinement vécue c'est la littérature» | La Pensée et le mouvant : les problèmes philosophiques de l'origine de l'être et de l'ordre sont des «fantômes de problèmes», des chimères | Citation : «Les deux problèmes de l'origine de l'ordre, de l'être s'évanouissent»"],["Philosophie","Philosophie contemporaine","Sartre — Double néantisation et conscience révolutionnaire","L'Être et le Néant (1943) | Pour changer le monde, il faut d'abord prendre conscience qu'il doit être changé : la double néantisation | 1re néantisation : trouver un référent extérieur (rencontre ou imagination) qui montre un état différent | 2e néantisation : concevoir que sa propre situation puisse être différente | La souffrance banalisée empêche la 2e néantisation : «Il souffre sans considérer sa souffrance et sans lui conférer de valeur : souffrir et être ne font qu'un pour lui» | Exemple : les canuts de Lyon | Changer le monde exige d'abord une attitude critique et réflexive face aux structures de domination"],["Philosophie","Philosophie contemporaine","Jakob von Uexküll — Umwelt et perception du monde","Mondes Animaux et Monde Humain (1956) | Chacun a une Weltanschauung (représentation du monde) différente | Umgebung : environnement extérieur à un organisme | Umwelt : monde propre dessiné par l'action et la perception de chaque être face à l'Umgebung | Exemple du chêne : pour le forestier = stères de bois ; pour la fillette = esprit malfaisant ; pour le renard = toit protecteur ; pour la fourmis = écorce ; pour la chouette = branches | Citation : «Dis-moi comment tu perçois le monde et je te dirai qui tu es» | Problème pour le monde commun : personne ne perçoit le monde de la même manière"],["Philosophie","Philosophie contemporaine","Wittgenstein — Tractatus : le sens du monde hors du monde","Tractatus Logico-philosophicus (1921) | Le véritable sens du monde se trouve hors de lui : «Dans le monde toutes choses sont comme elles sont et se produisent comme elles se produisent : il n'y a pas en lui de valeur» | Tout ce qu'on peut dire du monde est limité par le langage et la logique, systèmes humains inscrits dans le monde | Chercher le sens du monde = vouloir enfermer l'infini dans les limites finies du langage | Citation : «Ce dont on ne peut parler, il faut le taire» | La quête du sens ultime doit être abandonnée au profit d'une reconnaissance des limites de l'action humaine"],["Philosophie","Esthétique","Arthur Eddington — Désenchantement scientifique du monde","La nature du monde physique (1929) | La science désenchante le monde en le réduisant à des paramètres mesurables | Exemple de l'éléphant sur la pente gazonnée : l'approche scientifique remplace l'animal par une masse de 2 tonnes, la pente par un angle de 60°, le gazon par un coefficient de frottement | La science transforme les faits en paramètres, puis produit des relations entre ces paramètres pour former des lois | Citation : «Toute idée poétique s'évade du problème et, au moment où commence la science exacte, nous restons avec nos lectures seules» | La science retire au monde sa poésie"],["Philosophie","Esthétique","Gaston Bachelard — L'imagination ouvre des mondes","La Poétique de l'espace (1957) ; L'Air et les songes (1934) | L'imagination n'est pas une simple reproduction des images mais une puissance de transformation et de création | L'imagination est un processus ontologique qui modifie notre relation au monde | Citation : «Imaginer c'est hausser le réel d'un ton» | Elle permet de transcender les limites de la perception habituelle et de révéler des aspects cachés de la réalité | Offre une vision poétique et créatrice du monde | L'imagination ouvre des mondes : elle offre de nouvelles possibilités à la réalité"],["Philosophie","Philosophie contemporaine","Hans Jonas — Principe de responsabilité et heuristique de la peur","Le Principe de Responsabilité (1979) | Les nouvelles formes de l'«agir humain» font peser des menaces extrêmes sur l'environnement et l'humanité | L'éthique doit se refonder autour de la responsabilité : obligations envers les êtres qui n'existent pas encore | Nouvel impératif catégorique : «Agis de telle façon que les effets de ton action ne soient pas destructeurs pour la possibilité future d'une telle vie» | «Heuristique de la peur» : anticiper les menaces potentielles pour élaborer des principes éthiques préventifs | Citation : «Le Prométhée définitivement déchaîné réclame une éthique qui, par des entraves librement consenties, empêche le pouvoir de l'homme de devenir une malédiction pour lui»"],["Littérature","Grandes oeuvres","Victor Hugo — Sublime et grotesque, tout être est un monde","Les Misérables (1862) ; Les Contemplations (1856) | Thèse : tout être peut se révéler un monde riche et complexe, résultante de la coexistence du sublime et du grotesque | L'être humain est un microcosme à l'image du macrocosme | Les Misérables : monde d'un bagnard (Jean Valjean), d'une prostituée (Fantine), d'une enfant des rues (Cosette) → les marges de la société comme mondes riches | Poème «La vie aux champs» (Contemplations, 1856) : «Et tout homme est un livre où Dieu lui-même écrit» | Chez Hugo : tout le monde est un monde"]].map(r=>({domaine:r[0],theme:r[1],titre:r[2],contenu:r[3]}));
+
+// ===== PIXEL ART DRAWING =====
+function px(ctx, x, y, color, size=4) {
+  ctx.fillStyle = color;
+  ctx.fillRect(x*size, y*size, size, size);
+}
+
+function drawHermes(canvas, state) {
+  const ctx = canvas.getContext('2d');
+  const s = 5;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const D = (x, y, c) => { ctx.fillStyle=c; ctx.fillRect(x*s, y*s, s, s); };
+  const R = (x1,y1,x2,y2,c) => { ctx.fillStyle=c; ctx.fillRect(x1*s,y1*s,(x2-x1+1)*s,(y2-y1+1)*s); };
+
+  // PALETTE
+  const SKIN='#d4aa80', SKIN2='#c49060', GOLD='#e8c050', GOLD2='#c8a030', GOLD3='#f0d060';
+  const WING_L='#f0f0ff', WING_D='#c0c0e0', TOGA='#ece4d4', TOGA_S='#ccc4a4';
+  const SNAKE_G='#50b840', SNAKE_D='#308820', STAFF='#b09040', STAFF2='#907020';
+  const EYE='#1a1020', MOUTH_N='#a06040', MOUTH_H='#d06040', MOUTH_S='#804020';
+  const HAIR='#c89040', SANDAL='#d4a030', SANDAL2='#b08020', SHIN='#c09060';
+  const TOGAS='#a8a090', BELT='#c8a040', RED='#c03020';
+  const SHADOW='rgba(0,0,0,0.3)';
+
+  // ===== CADUCEUS (left side, x=1..4) =====
+  // Staff
+  for(let y=8;y<=48;y++) D(2, y, y%2===0?STAFF:STAFF2);
+  // Tip (spear point)
+  D(2,6,GOLD); D(2,5,GOLD2); D(1,7,GOLD2); D(3,7,GOLD2);
+  // Wings on caduceus top
+  D(0,9,WING_L); D(0,8,WING_L); D(-1,8,WING_D);
+  D(4,9,WING_L); D(4,8,WING_L); D(5,8,WING_D);
+  D(0,10,WING_D); D(4,10,WING_D);
+  // Snakes winding around staff
+  // Snake 1 (green)
+  D(3,12,SNAKE_G); D(4,13,SNAKE_G); D(4,14,SNAKE_G); D(3,15,SNAKE_G);
+  D(1,16,SNAKE_G); D(0,17,SNAKE_G); D(0,18,SNAKE_G); D(1,19,SNAKE_G);
+  D(3,20,SNAKE_G); D(4,21,SNAKE_G); D(4,22,SNAKE_G); D(3,23,SNAKE_G);
+  D(1,24,SNAKE_G); D(0,25,SNAKE_G); D(0,26,SNAKE_G); D(1,27,SNAKE_G);
+  // Snake heads
+  D(4,11,SNAKE_D); D(5,11,SNAKE_D); D(4,10,SNAKE_D);
+  D(0,28,SNAKE_D); D(-1,28,SNAKE_D); D(0,29,SNAKE_D);
+  // Snake eyes (tiny)
+  D(5,10,EYE); D(-1,27,EYE);
+
+  // ===== PÉTASE / HELMET (floating, detailed) =====
+  // Wide brim
+  R(4,1, 18,2, GOLD2);
+  D(3,2,GOLD2); D(19,2,GOLD2);
+  // Dome
+  R(6,0, 16,1, GOLD);
+  D(5,1,GOLD); D(17,1,GOLD);
+  // Interior shadow
+  R(7,2, 15,2, GOLD2);
+  // Helmet crest decoration
+  D(11,0,RED); D(12,0,RED);
+  // Large wings on sides of helmet
+  // Left wing
+  D(2,2,WING_L); D(1,1,WING_L); D(0,2,WING_L); D(1,3,WING_L);
+  D(2,3,WING_L); D(0,3,WING_D); D(-1,2,WING_D); D(1,0,WING_D);
+  D(2,1,WING_D); D(0,1,WING_D);
+  // Right wing  
+  D(20,2,WING_L); D(21,1,WING_L); D(22,2,WING_L); D(21,3,WING_L);
+  D(20,3,WING_L); D(22,3,WING_D); D(23,2,WING_D); D(21,0,WING_D);
+  D(20,1,WING_D); D(22,1,WING_D);
+
+  // ===== FACE =====
+  // Head shape
+  R(7,3, 15,9, SKIN);
+  D(6,4,SKIN); D(6,5,SKIN); D(6,6,SKIN); D(6,7,SKIN);
+  D(16,4,SKIN); D(16,5,SKIN); D(16,6,SKIN); D(16,7,SKIN);
+  D(7,10,SKIN); D(8,10,SKIN); D(9,10,SKIN); D(10,10,SKIN);
+  D(11,10,SKIN); D(12,10,SKIN); D(13,10,SKIN); D(14,10,SKIN); D(15,10,SKIN);
+  // Ear
+  D(6,6,SKIN2); D(5,6,SKIN2); D(5,7,SKIN2); D(6,7,SKIN2);
+  D(16,6,SKIN2); D(17,6,SKIN2); D(17,7,SKIN2); D(16,7,SKIN2);
+  // Chin
+  D(8,11,SKIN); D(9,11,SKIN); D(10,11,SKIN); D(11,11,SKIN); D(12,11,SKIN); D(13,11,SKIN); D(14,11,SKIN);
+  D(9,12,SKIN); D(10,12,SKIN); D(11,12,SKIN); D(12,12,SKIN); D(13,12,SKIN);
+  // Hair locks at side
+  D(7,3,HAIR); D(6,3,HAIR); D(8,3,HAIR);
+  D(15,3,HAIR); D(16,3,HAIR); D(14,3,HAIR);
+  // EYES
+  const eyeState = state==='sad'?1:0;
+  D(9,6+eyeState,EYE); D(10,6+eyeState,EYE);
+  D(13,6+eyeState,EYE); D(14,6+eyeState,EYE);
+  // Eyebrow
+  D(9,5,HAIR); D(10,5,HAIR); D(11,5,HAIR);
+  D(12,5,HAIR); D(13,5,HAIR); D(14,5,HAIR);
+  if(state==='sad'){D(9,5,SKIN2); D(13,5,SKIN2);}
+  // Eye whites
+  D(9,6,WING_L); D(10,6,WING_L); D(13,6,WING_L); D(14,6,WING_L);
+  D(9,6+eyeState,EYE); D(10,6+eyeState,EYE); D(13,6+eyeState,EYE); D(14,6+eyeState,EYE);
+  // Nose
+  D(11,8,SKIN2); D(12,8,SKIN2); D(10,9,SKIN2); D(13,9,SKIN2);
+  // MOUTH
+  if(state==='happy'){
+    D(9,10,MOUTH_H); D(10,10,MOUTH_H); D(11,10,MOUTH_H); D(12,10,MOUTH_H); D(13,10,MOUTH_H);
+    D(8,9,MOUTH_H); D(14,9,MOUTH_H);
+    D(9,11,SKIN); D(13,11,SKIN); // dimples
+    // teeth
+    D(10,10,WING_L); D(11,10,WING_L); D(12,10,WING_L);
+  } else if(state==='sad'){
+    D(9,11,MOUTH_S); D(10,11,MOUTH_S); D(11,11,MOUTH_S); D(12,11,MOUTH_S); D(13,11,MOUTH_S);
+    D(8,10,MOUTH_S); D(14,10,MOUTH_S);
+    D(9,12,SKIN2); D(13,12,SKIN2);
+  } else {
+    D(9,10,MOUTH_N); D(10,10,MOUTH_N); D(11,10,MOUTH_N); D(12,10,MOUTH_N); D(13,10,MOUTH_N);
+    D(8,10,SKIN2); D(14,10,SKIN2);
+  }
+
+  // ===== TOGA / BODY =====
+  // Neck
+  D(10,13,SKIN); D(11,13,SKIN); D(12,13,SKIN);
+  D(10,14,SKIN); D(11,14,SKIN); D(12,14,SKIN);
+  // Shoulders
+  R(7,15, 15,15, TOGA);
+  D(6,15,TOGA_S); D(16,15,TOGA_S);
+  // Toga collar/drape detail
+  D(9,14,TOGA); D(13,14,TOGA);
+  D(8,15,TOGAS); D(14,15,TOGAS);
+  // Body toga
+  R(7,16, 15,26, TOGA);
+  D(6,16,TOGA_S); D(6,17,TOGA_S); D(6,18,TOGA_S);
+  D(16,16,TOGA_S); D(16,17,TOGA_S); D(16,18,TOGA_S);
+  // Toga folds (darker lines for detail)
+  for(let y=16;y<=26;y+=3){
+    D(9,y,TOGA_S); D(12,y,TOGA_S);
+  }
+  // Toga drape left
+  D(5,17,TOGA); D(4,18,TOGA); D(5,18,TOGA);
+  D(5,19,TOGA); D(4,19,TOGA_S);
+  // Toga drape right
+  D(17,17,TOGA); D(18,18,TOGA); D(17,18,TOGA);
+  D(17,19,TOGA); D(18,19,TOGA_S);
+  // Belt
+  R(7,24, 15,25, BELT);
+  D(11,24,GOLD3); D(11,25,GOLD3); // buckle
+  // Lower toga / skirt
+  R(6,26, 16,32, TOGA);
+  D(5,26,TOGA_S); D(17,26,TOGA_S);
+  D(5,27,TOGA_S); D(17,27,TOGA_S);
+  // Toga hem detail
+  for(let x=6;x<=16;x++) D(x,32,TOGAS);
+
+  // ===== ARMS =====
+  // Left arm (holding caduceus)
+  D(5,16,SKIN); D(4,17,SKIN); D(3,18,SKIN); D(3,19,SKIN);
+  D(3,20,SKIN); D(4,21,SKIN); D(4,22,SKIN);
+  D(5,16,TOGA_S); // sleeve start
+  // Left hand
+  D(3,23,SKIN); D(4,23,SKIN); D(3,24,SKIN); D(4,24,SKIN);
+  D(2,23,SKIN); // thumb
+
+  // Right arm
+  if(state==='happy'){
+    // Arm raised for thumb up
+    D(17,16,SKIN); D(18,15,SKIN); D(19,14,SKIN); D(19,13,SKIN);
+    D(19,12,SKIN); D(19,11,SKIN);
+    // Fist
+    D(19,15,SKIN); D(20,15,SKIN); D(20,16,SKIN); D(19,16,SKIN);
+    // THUMB UP (golden!)
+    D(20,11,GOLD3); D(20,10,GOLD3); D(20,9,GOLD3); D(20,8,GOLD3);
+    D(21,10,GOLD3); D(21,9,GOLD3);
+    D(20,12,SKIN); // knuckle
+    // Glow
+    ctx.shadowColor='#f0c030'; ctx.shadowBlur=8;
+    D(20,9,GOLD3);
+    ctx.shadowBlur=0;
+  } else if(state==='sad'){
+    // Both hands on head/face
+    D(17,16,SKIN); D(18,15,SKIN); D(19,14,SKIN); D(19,13,SKIN);
+    D(18,12,SKIN); D(17,11,SKIN); D(16,10,SKIN); D(15,9,SKIN);
+    D(18,13,SKIN); D(17,12,SKIN); D(16,11,SKIN);
+    // fingers splayed on face
+    D(15,8,SKIN); D(16,8,SKIN); D(14,8,SKIN);
+  } else {
+    D(17,16,SKIN); D(18,17,SKIN); D(18,18,SKIN);
+    D(18,19,SKIN); D(17,20,SKIN); D(17,21,SKIN);
+    D(17,22,SKIN);
+  }
+
+  // ===== LEGS =====
+  // Leg left
+  D(8,33,SHIN); D(9,33,SHIN); D(8,34,SHIN); D(9,34,SHIN);
+  D(8,35,SHIN); D(9,35,SHIN); D(8,36,SHIN); D(9,36,SHIN);
+  D(8,37,SHIN); D(9,37,SHIN); D(8,38,SHIN); D(9,38,SHIN);
+  // Leg right
+  D(12,33,SHIN); D(13,33,SHIN); D(12,34,SHIN); D(13,34,SHIN);
+  D(12,35,SHIN); D(13,35,SHIN); D(12,36,SHIN); D(13,36,SHIN);
+  D(12,37,SHIN); D(13,37,SHIN); D(12,38,SHIN); D(13,38,SHIN);
+  // Knee detail
+  D(8,36,SKIN2); D(9,36,SKIN2); D(12,36,SKIN2); D(13,36,SKIN2);
+
+  // ===== WINGED SANDALS =====
+  // Left foot + sandal
+  R(6,39, 11,40, SANDAL);
+  D(5,39,SANDAL2); D(5,40,SANDAL2);
+  D(12,39,SANDAL2);
+  // Sandal straps
+  D(7,39,SANDAL2); D(9,39,SANDAL2);
+  D(8,38,SANDAL2); D(10,38,SANDAL2);
+  // Left ankle wings
+  D(4,38,WING_L); D(3,37,WING_L); D(3,38,WING_L); D(2,37,WING_D);
+  D(4,37,WING_L); D(3,36,WING_D); D(2,38,WING_D);
+  D(4,39,WING_D); D(3,39,WING_D);
+
+  // Right foot + sandal
+  R(11,39, 16,40, SANDAL);
+  D(10,39,SANDAL2);
+  D(17,39,SANDAL2); D(17,40,SANDAL2);
+  // Sandal straps
+  D(12,39,SANDAL2); D(14,39,SANDAL2);
+  D(13,38,SANDAL2); D(15,38,SANDAL2);
+  // Right ankle wings
+  D(18,38,WING_L); D(19,37,WING_L); D(19,38,WING_L); D(20,37,WING_D);
+  D(18,37,WING_L); D(19,36,WING_D); D(20,38,WING_D);
+  D(18,39,WING_D); D(19,39,WING_D);
+
+  // FLOATING GLOW effect on whole figure
+  if(state==='idle' || state==='happy'){
+    // Subtle golden outline glow
+    ctx.shadowColor = state==='happy'?'#f0c030':'#c8a030';
+    ctx.shadowBlur = state==='happy'?12:6;
+    D(11,24,GOLD3); // re-draw belt buckle to apply glow
+    ctx.shadowBlur=0;
+  }
+}
+
+function drawPhilo(canvas, state) {
+  const ctx = canvas.getContext('2d');
+  const s = 5;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const D = (x, y, c) => { ctx.fillStyle=c; ctx.fillRect(x*s, y*s, s, s); };
+  const R = (x1,y1,x2,y2,c) => { ctx.fillStyle=c; ctx.fillRect(x1*s,y1*s,(x2-x1+1)*s,(y2-y1+1)*s); };
+
+  // PALETTE
+  const SKIN='#d0b898', SKIN2='#b09070', SKIN3='#c0a888';
+  const HAIR='#1a1010', COAT='#14141e', COAT_L='#1e1e2e', COAT_S='#0a0a12';
+  const SHIRT='#f0ece0', SHIRT_S='#d0ccb8', PANTS='#10101a', PANTS_L='#181820';
+  const GLASS='#6878c0', GLASS_L='#8898e0', GLASS_F='#c0c8f0';
+  const BEARD='#2a2010', BEARD_L='#3a3020', MOUTH_N='#a08060', MOUTH_H='#c06040', MOUTH_S='#6a4020';
+  const SHOE='#0a0810', SHOE_L='#1a1820', GOLD='#e8c050', EYE='#0a0818';
+  const BUTTON='#8898c0', TIE='#4050a0';
+
+  // ===== HAIR (detailed) =====
+  R(7,1, 15,3, HAIR);
+  D(6,2,HAIR); D(6,3,HAIR); D(16,2,HAIR); D(16,3,HAIR);
+  D(5,3,HAIR); D(17,3,HAIR);
+  // Hair texture
+  D(8,1,BEARD_L); D(11,1,BEARD_L); D(14,1,BEARD_L);
+  // Side hair over ears
+  D(6,4,HAIR); D(6,5,HAIR); D(6,6,HAIR);
+  D(16,4,HAIR); D(16,5,HAIR); D(16,6,HAIR);
+  // Part / highlight
+  D(11,2,BEARD_L); D(12,2,BEARD_L);
+
+  // ===== FACE =====
+  R(7,4, 15,12, SKIN);
+  D(6,5,SKIN); D(6,6,SKIN); D(6,7,SKIN); D(6,8,SKIN); D(6,9,SKIN);
+  D(16,5,SKIN); D(16,6,SKIN); D(16,7,SKIN); D(16,8,SKIN); D(16,9,SKIN);
+  // Forehead
+  R(8,4, 14,4, SKIN3);
+  // Cheekbones
+  D(7,9,SKIN3); D(15,9,SKIN3);
+  // Ear left
+  D(5,7,SKIN2); D(4,7,SKIN2); D(4,8,SKIN2); D(5,8,SKIN2); D(4,9,SKIN2); D(5,9,SKIN2);
+  // Ear right
+  D(17,7,SKIN2); D(18,7,SKIN2); D(18,8,SKIN2); D(17,8,SKIN2); D(18,9,SKIN2); D(17,9,SKIN2);
+  // Inner ear
+  D(4,8,SKIN3); D(18,8,SKIN3);
+
+  // ===== GLASSES (thick rim, intellectual) =====
+  // Left lens frame
+  R(7,6, 10,8, GLASS);
+  D(7,6,GLASS_L); D(7,7,GLASS_L); D(7,8,GLASS_L);
+  D(10,6,GLASS_L); D(10,7,GLASS_L); D(10,8,GLASS_L);
+  // Left lens fill
+  D(8,7,GLASS_F); D(9,7,GLASS_F);
+  // Bridge
+  D(11,7,GLASS); D(12,7,GLASS);
+  // Right lens frame
+  R(12,6, 15,8, GLASS);
+  D(12,6,GLASS_L); D(12,7,GLASS_L); D(12,8,GLASS_L);
+  D(15,6,GLASS_L); D(15,7,GLASS_L); D(15,8,GLASS_L);
+  // Right lens fill
+  D(13,7,GLASS_F); D(14,7,GLASS_F);
+  // Temple arms
+  D(6,7,GLASS); D(5,7,GLASS); D(16,7,GLASS); D(17,7,GLASS);
+
+  // Eyes behind glasses
+  D(8,7,EYE); D(9,7,EYE); D(13,7,EYE); D(14,7,EYE);
+  if(state==='sad'){
+    D(8,7,SKIN); D(13,7,SKIN); // sad eyes: half closed
+    D(8,8,EYE); D(13,8,EYE);
+  }
+  // Eyebrows
+  D(8,5,HAIR); D(9,5,HAIR); D(10,5,HAIR);
+  D(12,5,HAIR); D(13,5,HAIR); D(14,5,HAIR);
+  if(state==='sad'){
+    // furrowed brow
+    D(8,5,BEARD); D(10,5,BEARD); D(12,5,BEARD); D(14,5,BEARD);
+    D(9,4,BEARD); D(13,4,BEARD);
+  }
+
+  // Nose
+  D(11,9,SKIN2); D(12,9,SKIN2);
+  D(10,10,SKIN2); D(13,10,SKIN2);
+  D(11,10,SKIN3); D(12,10,SKIN3);
+
+  // ===== THICK BEARD =====
+  // Beard grows from chin down
+  for(let x=8;x<=14;x++) D(x,12,BEARD);
+  for(let x=7;x<=15;x++) D(x,13,BEARD);
+  for(let x=7;x<=15;x++) D(x,14,BEARD);
+  for(let x=8;x<=14;x++) D(x,15,BEARD);
+  for(let x=9;x<=13;x++) D(x,16,BEARD);
+  for(let x=10;x<=12;x++) D(x,17,BEARD);
+  // Beard texture / highlight
+  D(9,13,BEARD_L); D(12,13,BEARD_L); D(10,15,BEARD_L);
+  D(11,14,BEARD_L); D(13,15,BEARD_L);
+
+  // Mustache (connects to beard)
+  D(9,11,BEARD); D(10,11,BEARD); D(11,11,BEARD); D(12,11,BEARD); D(13,11,BEARD);
+  D(8,11,BEARD_L); D(14,11,BEARD_L);
+
+  // Mouth (barely visible under mustache)
+  if(state==='happy'){
+    D(10,12,MOUTH_H); D(11,12,MOUTH_H); D(12,12,MOUTH_H);
+    D(9,11,MOUTH_H); D(13,11,MOUTH_H);
+  } else if(state==='sad'){
+    D(10,12,MOUTH_S); D(11,12,MOUTH_S); D(12,12,MOUTH_S);
+    D(9,13,MOUTH_S); D(13,13,MOUTH_S);
+  } else {
+    D(10,12,MOUTH_N); D(11,12,MOUTH_N); D(12,12,MOUTH_N);
+  }
+
+  // Neck
+  D(10,18,SKIN); D(11,18,SKIN); D(12,18,SKIN); D(10,19,SKIN); D(11,19,SKIN); D(12,19,SKIN);
+
+  // ===== LONG BLACK COAT (detailed) =====
+  // Collar / lapels
+  D(9,19,SHIRT); D(10,19,SHIRT); D(11,19,SHIRT); D(12,19,SHIRT); D(13,19,SHIRT);
+  D(9,20,SHIRT); D(13,20,SHIRT);
+  D(8,21,SHIRT_S); D(14,21,SHIRT_S);
+  // Tie
+  D(11,20,TIE); D(11,21,TIE); D(11,22,TIE); D(11,23,TIE); D(12,22,TIE);
+  D(10,24,TIE); D(11,24,TIE); D(12,24,TIE);
+  // Coat body - left panel
+  for(let y=20;y<=50;y++){
+    D(7,y,COAT); D(8,y, y<30?COAT_L:COAT); D(9,y,COAT_L);
+  }
+  // Coat body - right panel
+  for(let y=20;y<=50;y++){
+    D(14,y,COAT_L); D(15,y, y<30?COAT_L:COAT); D(16,y,COAT);
+  }
+  // Coat center - shirt visible
+  for(let y=20;y<=28;y++){
+    D(10,y,SHIRT_S); D(11,y,SHIRT); D(12,y,SHIRT_S); D(13,y,SHIRT_S);
+  }
+  // Coat closes below
+  for(let y=28;y<=50;y++){
+    D(10,y,COAT_L); D(11,y,COAT_L); D(12,y,COAT_L); D(13,y,COAT_L);
+  }
+  // Coat buttons
+  D(11,26,BUTTON); D(11,29,BUTTON); D(11,32,BUTTON); D(11,35,BUTTON);
+  // Pocket flaps
+  R(8,32, 10,33, COAT_L);
+  D(7,32,COAT_S); D(7,33,COAT_S);
+  R(13,32, 15,33, COAT_L);
+  D(16,32,COAT_S); D(16,33,COAT_S);
+  // Coat tails / lower detail
+  for(let y=44;y<=50;y++){
+    D(6,y,COAT_S); D(17,y,COAT_S);
+  }
+  // Coat hem
+  for(let x=6;x<=17;x++) D(x,50,COAT_S);
+
+  // ===== ARMS =====
+  if(state==='happy'){
+    // RIGHT ARM: thumb up, raised high
+    D(17,22,COAT); D(18,21,COAT); D(19,20,COAT); D(19,19,SKIN);
+    D(19,18,SKIN); D(19,17,SKIN); D(19,16,SKIN);
+    // Fist
+    D(19,20,SKIN); D(20,20,SKIN); D(20,21,SKIN); D(21,21,SKIN); D(21,22,SKIN);
+    // Thumb UP golden
+    D(21,17,GOLD); D(21,16,GOLD); D(21,15,GOLD); D(21,14,GOLD); D(22,15,GOLD); D(22,16,GOLD);
+    D(20,17,GOLD); // knuckle base
+    // Cuff
+    D(17,21,SHIRT); D(18,20,SHIRT);
+    // Glow
+    ctx.shadowColor='#f0c030'; ctx.shadowBlur=10;
+    D(21,15,GOLD);
+    ctx.shadowBlur=0;
+    // LEFT ARM: resting
+    D(6,22,COAT); D(5,23,COAT); D(5,24,COAT); D(5,25,COAT);
+    D(5,26,COAT); D(5,27,COAT); D(4,28,SKIN); D(5,28,SKIN); D(4,29,SKIN);
+    D(6,21,SHIRT);
+  } else if(state==='sad'){
+    // BOTH HANDS ON HEAD
+    // Left arm goes up
+    D(6,21,COAT); D(5,20,COAT); D(4,19,SKIN); D(3,18,SKIN); D(3,17,SKIN);
+    D(4,16,SKIN); D(5,15,SKIN); D(6,14,SKIN); D(7,13,SKIN);
+    D(3,16,SKIN); D(4,15,SKIN); D(5,14,SKIN); D(6,13,SKIN);
+    // Right arm goes up
+    D(17,21,COAT); D(18,20,COAT); D(19,19,SKIN); D(20,18,SKIN); D(20,17,SKIN);
+    D(19,16,SKIN); D(18,15,SKIN); D(17,14,SKIN); D(16,13,SKIN);
+    D(20,16,SKIN); D(19,15,SKIN); D(18,14,SKIN); D(17,13,SKIN);
+    // Hands cupping face / head
+    D(6,12,SKIN); D(7,11,SKIN); D(7,12,SKIN);
+    D(16,12,SKIN); D(15,11,SKIN); D(15,12,SKIN);
+    // Cuffs
+    D(6,20,SHIRT); D(18,19,SHIRT);
+  } else {
+    // Idle - arms at sides
+    D(6,21,COAT); D(5,22,COAT); D(5,23,COAT); D(5,24,COAT);
+    D(5,25,COAT); D(4,26,COAT); D(4,27,SKIN); D(5,28,SKIN);
+    D(17,21,COAT); D(18,22,COAT); D(18,23,COAT); D(18,24,COAT);
+    D(18,25,COAT); D(19,26,COAT); D(19,27,SKIN); D(18,28,SKIN);
+    // Cuffs
+    D(6,20,SHIRT); D(17,20,SHIRT);
+  }
+
+  // ===== TROUSERS =====
+  // Left trouser
+  R(8,51, 10,57, PANTS_L);
+  D(7,51,PANTS); D(7,52,PANTS); D(7,53,PANTS);
+  D(11,51,PANTS); D(11,52,PANTS); D(11,53,PANTS);
+  // Crease
+  D(9,52,PANTS); D(9,54,PANTS); D(9,56,PANTS);
+  // Right trouser
+  R(12,51, 14,57, PANTS_L);
+  D(11,51,PANTS); D(11,52,PANTS); D(11,53,PANTS);
+  D(15,51,PANTS); D(15,52,PANTS); D(15,53,PANTS);
+  // Crease
+  D(13,52,PANTS); D(13,54,PANTS); D(13,56,PANTS);
+
+  // ===== SHOES (detailed Oxford style) =====
+  // Left shoe
+  R(6,58, 11,59, SHOE_L);
+  D(5,58,SHOE); D(5,59,SHOE); D(12,58,SHOE);
+  D(6,60,SHOE); D(7,60,SHOE); D(8,60,SHOE); D(9,60,SHOE); D(10,60,SHOE);
+  // Toe cap
+  D(5,60,SHOE_L); D(6,60,SHOE_L); D(7,60,SHOE_L);
+  // Heel
+  D(11,59,SHOE); D(11,58,SHOE);
+  // Laces
+  D(7,58,SKIN2); D(9,58,SKIN2);
+  // Right shoe
+  R(11,58, 16,59, SHOE_L);
+  D(10,58,SHOE); D(17,58,SHOE); D(17,59,SHOE);
+  D(11,60,SHOE); D(12,60,SHOE); D(13,60,SHOE); D(14,60,SHOE); D(15,60,SHOE);
+  // Toe cap
+  D(15,60,SHOE_L); D(16,60,SHOE_L); D(17,60,SHOE_L);
+  // Heel
+  D(11,59,SHOE); D(11,58,SHOE);
+  // Laces
+  D(12,58,SKIN2); D(14,58,SKIN2);
+}
+
+// ===== INIT PIXEL ART =====
+let hermesCanvas, philoCanvas;
+function initGuards() {
+  hermesCanvas = document.getElementById('hermes-canvas');
+  philoCanvas = document.getElementById('philo-canvas');
+  drawHermes(hermesCanvas, 'idle');
+  drawPhilo(philoCanvas, 'idle');
+}
+
+function animGuards(correct) {
+  const hc = document.getElementById('hermes-canvas');
+  const pc = document.getElementById('philo-canvas');
+  const badge = document.getElementById('combo-badge');
+  hc.className = 'guard-canvas';
+  pc.className = 'guard-canvas';
+  void hc.offsetWidth;
+  if(correct) {
+    drawHermes(hc, 'happy');
+    drawPhilo(pc, 'happy');
+    hc.className = 'guard-canvas hermes-happy';
+    pc.className = 'guard-canvas philo-happy';
+    if(defiStreak>=10) badge.textContent = '🌟🌟🌟';
+    else if(defiStreak>=5) badge.textContent = '⚡⚡';
+    else badge.textContent = '👍';
+    setTimeout(()=>{ drawHermes(hc,'idle'); hc.className='guard-canvas hermes-idle'; }, 700);
+  } else {
+    drawHermes(hc, 'sad');
+    drawPhilo(pc, 'sad');
+    hc.className = 'guard-canvas hermes-sad';
+    pc.className = 'guard-canvas philo-sad';
+    badge.textContent = '💀';
+    setTimeout(()=>{ drawHermes(hc,'idle'); hc.className='guard-canvas hermes-idle'; }, 700);
+  }
+}
+
+// ===== UTILS =====
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const m={p1:'nb1',p2:'nb2',p3:'nb3'};
+  document.getElementById(m[id]).classList.add('active');
+  if(id==='p2'&&!hermesCanvas){setTimeout(initGuards,50);}
+  if(id==='p3')revRender();
+}
+
+// ===== PAGE 1 : FLASHCARDS =====
+let p1deck=[],p1idx=0,p1flipped=false,p1scores={};
+const sd=document.getElementById('sd'),st=document.getElementById('st');
+const domaines=['Tous les domaines',...new Set(ALL.map(d=>d.domaine))];
+domaines.forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;sd.appendChild(o);});
+sd.addEventListener('change',()=>{p1updateThemes();p1build();});
+st.addEventListener('change',p1build);
+
+function p1updateThemes(){
+  const dv=sd.value;
+  const base=dv==='Tous les domaines'?ALL:ALL.filter(d=>d.domaine===dv);
+  const themes=['Tous les thèmes',...new Set(base.map(d=>d.theme))];
+  st.innerHTML='';themes.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;st.appendChild(o);});
+}
+p1updateThemes();
+
+function p1build(){
+  const dv=sd.value,tv=st.value,f=document.getElementById('sf').value;
+  let base=dv==='Tous les domaines'?ALL:ALL.filter(d=>d.domaine===dv);
+  if(tv&&tv!=='Tous les thèmes')base=base.filter(d=>d.theme===tv);
+  if(f==='todo')base=base.filter(d=>p1scores[d.titre]!==true);
+  if(f==='ok')base=base.filter(d=>p1scores[d.titre]===true);
+  p1deck=[...base];p1idx=0;p1flipped=false;p1updateStats();p1render();
+}
+function p1shuffle(){for(let i=p1deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[p1deck[i],p1deck[j]]=[p1deck[j],p1deck[i]];}p1idx=0;p1flipped=false;p1render();}
+function p1reset(){if(!confirm('Réinitialiser ?'))return;p1scores={};document.getElementById('si').textContent='';p1build();toast('Réinitialisé.');}
+
+function p1render(){
+  if(!p1deck.length){
+    document.getElementById('fw').textContent='Aucune carte.';
+    ['fd','ft','fh'].forEach(id=>document.getElementById(id).textContent='');
+    document.getElementById('fa').style.display='none';document.getElementById('vr').style.display='none';
+    document.getElementById('ni').textContent='0/0';document.getElementById('pb').style.width='0%';return;
+  }
+  const c=p1deck[p1idx];
+  document.getElementById('fd').textContent=c.domaine;
+  document.getElementById('ft').textContent=c.theme;
+  document.getElementById('fw').textContent=c.titre;
+  document.getElementById('fh').textContent=p1flipped?'':'— toucher pour révéler —';
+  document.getElementById('fa').style.display=p1flipped?'block':'none';
+  if(p1flipped){
+    const facts=c.contenu.split(' | ');
+    document.getElementById('fc2').innerHTML=facts.map(f=>'<div class="fact-line"><span class="fact-dot">▶</span><span>'+f+'</span></div>').join('');
+  }
+  document.getElementById('ni').textContent=(p1idx+1)+'/'+p1deck.length;
+  document.getElementById('vr').style.display=p1flipped?'flex':'none';
+  document.getElementById('pb').style.width=Math.round(((p1idx+1)/p1deck.length)*100)+'%';
+}
+function p1flip(){if(!p1deck.length)return;p1flipped=!p1flipped;p1render();}
+function p1go(dir){if(!p1deck.length)return;p1idx=(p1idx+dir+p1deck.length)%p1deck.length;p1flipped=false;p1render();}
+function p1vote(ok){
+  if(!p1deck.length)return;
+  p1scores[p1deck[p1idx].titre]=ok;p1updateStats();
+  if(ok&&document.getElementById('sf').value==='todo'){p1deck.splice(p1idx,1);if(p1idx>=p1deck.length)p1idx=0;p1flipped=false;p1render();}
+  else p1go(1);
+}
+function p1updateStats(){
+  const dv=sd.value,tv=st.value;
+  let base=dv==='Tous les domaines'?ALL:ALL.filter(d=>d.domaine===dv);
+  if(tv&&tv!=='Tous les thèmes')base=base.filter(d=>d.theme===tv);
+  const ok=base.filter(d=>p1scores[d.titre]===true).length;
+  const ko=base.filter(d=>p1scores[d.titre]===false).length;
+  document.getElementById('s-t').textContent=base.length;
+  document.getElementById('s-o').textContent=ok;
+  document.getElementById('s-k').textContent=ko;
+  const r=ok+ko;document.getElementById('s-p').textContent=r>0?Math.round(ok/r*100)+'%':'—';
+}
+function p1save(){
+  const ok=Object.values(p1scores).filter(v=>v===true).length;
+  const ko=Object.values(p1scores).filter(v=>v===false).length;
+  const blob=new Blob([JSON.stringify({version:1,prenom:PRENOM,date:new Date().toISOString(),scores:p1scores,defiRecord,summary:{total:ALL.length,sus:ok,arevoir:ko}},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='philo_'+PRENOM.toLowerCase().replace(/é/g,'e')+'_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();URL.revokeObjectURL(a.href);toast('Sauvegardé !');
+}
+function p1load(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{const p=JSON.parse(e.target.result);if(!p.scores)throw new Error();
+    p1scores=p.scores;
+    if(p.defiRecord!==undefined){defiRecord=p.defiRecord;document.getElementById('record-num').textContent=defiRecord;}
+    const d=p.date?new Date(p.date).toLocaleDateString('fr-FR'):'?';
+    document.getElementById('si').textContent=d+' · '+p.summary.sus+' sus';
+    p1build();toast('Chargé !');}catch{toast('Fichier invalide.');}
+  };reader.readAsText(file);event.target.value='';
+}
+p1build();
+
+// ===== PAGE 2 : DÉFI =====
+let defiStreak=0,defiRecord=0,defiState='idle',defiCurrent=null,defiCorrectIdx=0,defiShuffled=[];
+
+function defiStart(){
+  defiStreak=0;document.getElementById('streak-num').textContent='0';
+  defiShuffled=[...ALL].sort(()=>Math.random()-.5);
+  defiState='question';
+  document.getElementById('btn-start').style.display='none';
+  document.getElementById('btn-restart').style.display='none';
+  document.getElementById('btn-next').style.display='none';
+  document.getElementById('combo-badge').textContent='';
+  if(!hermesCanvas)initGuards();
+  drawHermes(document.getElementById('hermes-canvas'),'idle');
+  drawPhilo(document.getElementById('philo-canvas'),'idle');
+  document.getElementById('hermes-canvas').className='guard-canvas hermes-idle';
+  defiShowNext();
+}
+
+function defiShowNext(){
+  if(!defiShuffled.length)defiShuffled=[...ALL].sort(()=>Math.random()-.5);
+  defiCurrent=defiShuffled.pop();
+  const correctFact=defiCurrent.contenu.split(' | ')[0];
+  const others=ALL.filter(c=>c.titre!==defiCurrent.titre).sort(()=>Math.random()-.5).slice(0,3);
+  const wrongFacts=others.map(c=>c.contenu.split(' | ')[0]);
+  const allChoices=[correctFact,...wrongFacts].sort(()=>Math.random()-.5);
+  defiCorrectIdx=allChoices.indexOf(correctFact);
+
+  document.getElementById('dq-dom').textContent=defiCurrent.domaine;
+  document.getElementById('dq-theme').textContent=defiCurrent.theme;
+  document.getElementById('dq-text').textContent=defiCurrent.titre;
+  document.getElementById('dq-reveal').style.display='none';
+
+  for(let i=0;i<4;i++){
+    const btn=document.getElementById('ch'+i);
+    btn.textContent=allChoices[i];btn.className='choice-btn';btn.disabled=false;
+  }
+  document.getElementById('defi-card').style.display='flex';
+  document.getElementById('defi-choices').style.display='grid';
+  document.getElementById('defi-card').className='defi-card';
+  document.getElementById('btn-next').style.display='none';
+}
+
+function defiAnswer(idx){
+  if(defiState!=='question')return;
+  defiState='answered';
+  const correct=(idx===defiCorrectIdx);
+  for(let i=0;i<4;i++){
+    const btn=document.getElementById('ch'+i);btn.disabled=true;
+    if(i===defiCorrectIdx)btn.className='choice-btn reveal-correct';
+    else if(i===idx&&!correct)btn.className='choice-btn wrong-choice';
+  }
+  if(correct){
+    defiStreak++;document.getElementById('streak-num').textContent=defiStreak;
+    document.getElementById('defi-card').classList.add('correct');
+    if(defiStreak>defiRecord){defiRecord=defiStreak;document.getElementById('record-num').textContent=defiRecord;}
+    animGuards(true);
+    const moreFacts=defiCurrent.contenu.split(' | ').slice(1,3).join(' · ');
+    document.getElementById('dq-reveal').textContent=moreFacts;
+    document.getElementById('dq-reveal').style.display='block';
+    document.getElementById('btn-next').style.display='block';
+    defiState='question';
+  } else {
+    document.getElementById('defi-card').classList.add('wrong');
+    animGuards(false);
+    const allFacts=defiCurrent.contenu.split(' | ').slice(0,3).join(' · ');
+    document.getElementById('dq-reveal').textContent='✗ '+allFacts;
+    document.getElementById('dq-reveal').style.display='block';
+    defiState='gameover';
+    setTimeout(()=>{document.getElementById('btn-restart').style.display='block';},800);
+  }
+}
+function defiNext(){if(defiState!=='question')return;defiShowNext();}
+
+// ===== PAGE 3 : RÉVISION =====
+let revActive='all',revSearch='';
+
+function revInit(){
+  const domaines2=['Tous',...new Set(ALL.map(d=>d.domaine))];
+  const c=document.getElementById('rev-filters');c.innerHTML='';
+  domaines2.forEach(d=>{
+    const btn=document.createElement('button');
+    btn.className='rev-filter-btn'+(d==='Tous'?' active':'');
+    btn.textContent=d;
+    btn.onclick=()=>{revActive=d==='Tous'?'all':d;document.querySelectorAll('.rev-filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');revRender();};
+    c.appendChild(btn);
+  });
+}
+revInit();
+
+function revFilter(){revSearch=document.getElementById('rev-search').value.toLowerCase();revRender();}
+function revRender(){
+  let base=revActive==='all'?ALL:ALL.filter(d=>d.domaine===revActive);
+  if(revSearch)base=base.filter(c=>c.titre.toLowerCase().includes(revSearch)||c.contenu.toLowerCase().includes(revSearch)||c.theme.toLowerCase().includes(revSearch));
+  document.getElementById('rev-count').textContent=base.length+' fiche'+(base.length>1?'s':'');
+  const container=document.getElementById('rev-list');container.innerHTML='';
+  base.forEach(card=>{
+    const item=document.createElement('div');item.className='rev-item';
+    const facts=card.contenu.split(' | ');
+    item.innerHTML=`<div class="rev-item-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="rev-item-left">
+        <div class="rev-item-dom">${card.domaine}</div>
+        <div class="rev-item-theme">${card.theme}</div>
+        <div class="rev-item-title">${card.titre}</div>
+      </div><span class="rev-item-arrow">▶</span></div>
+      <div class="rev-item-body">${facts.map(f=>`<div class="rev-fact-line"><span class="rev-fact-dot">▶</span><span>${f}</span></div>`).join('')}</div>`;
+    container.appendChild(item);
+  });
+}
+revRender();
+
+// Init guards on p2 first visit
+document.getElementById('nb2').addEventListener('click',()=>{if(!hermesCanvas)setTimeout(initGuards,100);});
+</script>
+</body>
+</html>
