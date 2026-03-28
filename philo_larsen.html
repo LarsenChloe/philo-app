@@ -146,6 +146,58 @@ select,button{font-family:'Inter',sans-serif}
 
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--txt);color:var(--bg);font-size:12px;padding:8px 18px;border-radius:4px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;white-space:nowrap;font-family:'Inter',sans-serif}
 .toast.show{opacity:1}
+
+/* PAGE 4 — QUI A DIT ÇA ? */
+.qsdc-title{font-size:11px;color:var(--gold);text-align:center;margin-bottom:4px;letter-spacing:.2em;text-transform:uppercase;position:relative;z-index:1}
+.qsdc-streak{font-size:52px;font-weight:700;color:var(--gold2);text-align:center;margin:4px 0;text-shadow:0 0 24px rgba(212,168,67,.4);position:relative;z-index:1}
+.qsdc-sub{font-size:9px;color:var(--txt2);text-transform:uppercase;letter-spacing:.1em;text-align:center;margin-bottom:2px;position:relative;z-index:1}
+.qsdc-record{font-size:12px;color:var(--txt2);text-align:center;margin-bottom:12px;position:relative;z-index:1}
+.qsdc-record span{color:var(--gold)}
+
+.qsdc-quote-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:10px;padding:18px 16px;margin-bottom:12px;position:relative;z-index:1;transition:border-color .3s}
+.qsdc-quote-card.correct{border-color:var(--green);background:#0a2014}
+.qsdc-quote-card.wrong{border-color:var(--red);background:#200a0a}
+.qsdc-dom{font-size:9px;color:var(--purple);text-transform:uppercase;letter-spacing:.15em;font-weight:700;margin-bottom:6px}
+.qsdc-quote{font-size:15px;line-height:1.7;color:var(--txt);font-style:italic;margin-bottom:8px}
+.qsdc-quote::before{content:'"';color:var(--gold);font-size:20px;font-style:normal;margin-right:2px}
+.qsdc-quote::after{content:'"';color:var(--gold);font-size:20px;font-style:normal;margin-left:2px}
+
+.qsdc-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;position:relative;z-index:1}
+.qsdc-choice{padding:10px 8px;border-radius:8px;font-size:12px;cursor:pointer;border:1px solid var(--bg4);background:var(--bg2);color:var(--txt);text-align:center;line-height:1.4;min-height:44px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:'Inter',sans-serif;font-weight:500}
+.qsdc-choice:active{transform:scale(.97)}
+.qsdc-choice.correct-ans{background:#0a2014;border-color:var(--green);color:var(--green)}
+.qsdc-choice.wrong-ans{background:#200a0a;border-color:var(--red);color:var(--red)}
+.qsdc-choice.reveal-ans{background:#0a2014;border-color:var(--green);color:var(--green)}
+
+/* FICHE EXPLICATIVE */
+.qsdc-fiche{background:var(--bg2);border:1px solid var(--gold);border-radius:10px;padding:16px;margin-bottom:12px;display:none;position:relative;z-index:1;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.qsdc-fiche.show{display:block}
+.qsdc-fiche-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--bg4)}
+.qsdc-author{font-size:18px;font-weight:700;color:var(--gold)}
+.qsdc-oeuvre{font-size:11px;color:var(--txt2);margin-top:3px;font-style:italic}
+.qsdc-theme-tag{font-size:9px;color:var(--purple);background:rgba(112,96,192,.15);border:1px solid rgba(112,96,192,.3);border-radius:12px;padding:3px 10px;white-space:nowrap;text-transform:uppercase;letter-spacing:.08em}
+.qsdc-fiche-section{margin-bottom:14px}
+.qsdc-fiche-label{font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin-bottom:7px}
+.qsdc-fiche-prose{font-size:13px;color:#c8c0dc;line-height:1.9;font-weight:400}
+.qsdc-fiche-prose p{margin-bottom:8px}
+.qsdc-fiche-prose p:last-child{margin-bottom:0}
+.qsdc-mots-cles{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.qsdc-mot{font-size:10px;color:var(--txt2);background:var(--bg3);border-radius:10px;padding:2px 8px;border:1px solid var(--bg4)}
+
+.qsdc-ctrl-btn{width:100%;padding:14px;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid;margin-bottom:8px;position:relative;z-index:1;transition:transform .1s;font-family:'Inter',sans-serif;letter-spacing:.05em;text-transform:uppercase}
+.qsdc-ctrl-btn:active{transform:scale(.98)}
+.qsdc-btn-start{background:var(--gold);color:#0a0c14;border-color:var(--gold2)}
+.qsdc-btn-next{background:var(--indigo);color:#fff;border-color:var(--purple)}
+.qsdc-btn-restart{background:#400a0a;color:var(--red);border-color:var(--red)}
+
+.qsdc-vulga{background:linear-gradient(135deg,rgba(112,96,192,.12),rgba(64,40,140,.08));border:1px solid rgba(112,96,192,.35);border-radius:10px;padding:14px 16px;margin-bottom:12px;display:none;position:relative;z-index:1;animation:fadeIn .4s ease}
+.qsdc-vulga.show{display:block}
+.qsdc-vulga-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.qsdc-vulga-icon{font-size:16px}
+.qsdc-vulga-label{font-size:9px;color:var(--purple);text-transform:uppercase;letter-spacing:.15em;font-weight:700}
+.qsdc-vulga-concept{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;font-style:italic}
+.qsdc-vulga-text{font-size:13px;color:#c8c0dc;line-height:1.85}
 </style>
 </head>
 <body>
@@ -159,6 +211,9 @@ select,button{font-family:'Inter',sans-serif}
   </button>
   <button class="nav-btn" onclick="showPage('p3')" id="nb3">
     <span class="nav-icon">📚</span><span class="nav-label">Révision</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('p4')" id="nb4">
+    <span class="nav-icon">🎭</span><span class="nav-label">Qui a dit ça ?</span>
   </button>
 </nav>
 
@@ -258,6 +313,60 @@ select,button{font-family:'Inter',sans-serif}
   <div class="rev-filters" id="rev-filters"></div>
   <div class="rev-count" id="rev-count"></div>
   <div class="rev-list" id="rev-list"></div>
+</div>
+
+
+<!-- PAGE 4 : QUI A DIT ÇA ? -->
+<div class="page" id="p4">
+  <div class="qsdc-title">🎭 Qui a dit ça ?</div>
+  <div class="qsdc-streak" id="qsdc-streak">0</div>
+  <div class="qsdc-sub">série en cours</div>
+  <div class="qsdc-record">Record : <span id="qsdc-record">0</span></div>
+
+  <div class="qsdc-quote-card" id="qsdc-card" style="display:none">
+    <div class="qsdc-dom" id="qsdc-dom"></div>
+    <div class="qsdc-quote" id="qsdc-quote"></div>
+  </div>
+
+  <div class="qsdc-choices" id="qsdc-choices" style="display:none">
+    <button class="qsdc-choice" id="qc0" onclick="qsdcAnswer(0)"></button>
+    <button class="qsdc-choice" id="qc1" onclick="qsdcAnswer(1)"></button>
+    <button class="qsdc-choice" id="qc2" onclick="qsdcAnswer(2)"></button>
+    <button class="qsdc-choice" id="qc3" onclick="qsdcAnswer(3)"></button>
+  </div>
+
+  <!-- FICHE EXPLICATIVE -->
+  <div class="qsdc-fiche" id="qsdc-fiche">
+    <div class="qsdc-fiche-header">
+      <div>
+        <div class="qsdc-author" id="qsdc-fiche-author"></div>
+        <div class="qsdc-oeuvre" id="qsdc-fiche-oeuvre"></div>
+      </div>
+      <div class="qsdc-theme-tag" id="qsdc-fiche-tag"></div>
+    </div>
+    <div class="qsdc-fiche-section">
+      <div class="qsdc-fiche-label">En clair</div>
+      <div class="qsdc-fiche-prose" id="qsdc-fiche-prose"></div>
+    </div>
+    <div class="qsdc-fiche-section" id="qsdc-mots-section">
+      <div class="qsdc-fiche-label">Mots-clés</div>
+      <div class="qsdc-mots-cles" id="qsdc-fiche-mots"></div>
+    </div>
+  </div>
+
+  <!-- ENCART VULGARISATION -->
+  <div class="qsdc-vulga" id="qsdc-vulga">
+    <div class="qsdc-vulga-header">
+      <span class="qsdc-vulga-icon">💡</span>
+      <span class="qsdc-vulga-label">En deux mots</span>
+    </div>
+    <div class="qsdc-vulga-concept" id="qsdc-vulga-concept"></div>
+    <div class="qsdc-vulga-text" id="qsdc-vulga-text"></div>
+  </div>
+
+  <button class="qsdc-ctrl-btn qsdc-btn-start" id="qsdc-btn-start" onclick="qsdcStart()">🎭 Commencer</button>
+  <button class="qsdc-ctrl-btn qsdc-btn-next" id="qsdc-btn-next" onclick="qsdcNext()" style="display:none">Suivant →</button>
+  <button class="qsdc-ctrl-btn qsdc-btn-restart" id="qsdc-btn-restart" onclick="qsdcStart()" style="display:none">↺ Recommencer</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -765,7 +874,7 @@ function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  const m={p1:'nb1',p2:'nb2',p3:'nb3'};
+  const m={p1:'nb1',p2:'nb2',p3:'nb3',p4:'nb4'};
   document.getElementById(m[id]).classList.add('active');
   if(id==='p2'&&!hermesCanvas){setTimeout(initGuards,50);}
   if(id==='p3')revRender();
@@ -972,6 +1081,404 @@ revRender();
 
 // Init guards on p2 first visit
 document.getElementById('nb2').addEventListener('click',()=>{if(!hermesCanvas)setTimeout(initGuards,100);});
+
+
+// ===================== PAGE 4 : QUI A DIT ÇA ? =====================
+// Only use philo cards (have proper theses — not mythology which has no "author said")
+const QSDC_POOL = ALL.filter(c => c.domaine === 'Philosophie' || c.domaine === 'Art' || c.domaine === 'Littérature');
+
+let qsdcStreak=0, qsdcRecord=0, qsdcState='idle', qsdcCurrent=null, qsdcCorrectIdx=0, qsdcShuffled=[];
+
+function qsdcBuildQuote(card) {
+  // Extract the most "citation-like" or thesis-like fragment from contenu
+  const facts = card.contenu.split(' | ');
+  // Find a fact that looks like a quote (contains quote marks) or is the most substantial
+  const quoted = facts.find(f => f.includes('«') || f.includes('"') || f.includes("'"));
+  if(quoted) {
+    // Extract just the quoted part
+    const m = quoted.match(/[«"']([^»"']{15,})[»"']/);
+    if(m) return m[1].trim();
+  }
+  // Otherwise use the 2nd or 3rd fact (usually the thesis/key idea, not just date)
+  const substantive = facts.find((f,i) => i>0 && f.length > 30 && !f.match(/^d|^~d|^XIVe|^XVe|^XVIe|^XVIIe|^XVIIIe|^XIXe|^XXe|^XXIe/));
+  return substantive || facts[1] || facts[0];
+}
+
+function qsdcExtractAuthor(card) {
+  // Title often = "Auteur — Oeuvre" or just "Auteur — Concept"
+  const title = card.titre;
+  const dashIdx = title.indexOf(' — ');
+  if(dashIdx > 0) return title.substring(0, dashIdx).trim();
+  // Or extract from first fact
+  const firstFact = card.contenu.split(' | ')[0];
+  return title;
+}
+
+function qsdcStart() {
+  qsdcStreak=0;
+  document.getElementById('qsdc-streak').textContent='0';
+  qsdcShuffled=[...QSDC_POOL].sort(()=>Math.random()-.5);
+  qsdcState='question';
+  document.getElementById('qsdc-btn-start').style.display='none';
+  document.getElementById('qsdc-btn-restart').style.display='none';
+  document.getElementById('qsdc-btn-next').style.display='none';
+  document.getElementById('qsdc-fiche').classList.remove('show');
+  qsdcShowNext();
+}
+
+function qsdcShowNext() {
+  if(!qsdcShuffled.length) qsdcShuffled=[...QSDC_POOL].sort(()=>Math.random()-.5);
+  qsdcCurrent = qsdcShuffled.pop();
+
+  // Build the quote to display
+  const quote = qsdcBuildQuote(qsdcCurrent);
+  const correctAuthor = qsdcExtractAuthor(qsdcCurrent);
+
+  // 3 wrong authors from same domaine/theme if possible, else any
+  const pool = QSDC_POOL.filter(c => c.titre !== qsdcCurrent.titre);
+  const sameTheme = pool.filter(c => c.theme === qsdcCurrent.theme);
+  const wrongPool = sameTheme.length >= 3 ? sameTheme : pool;
+  const wrongs = wrongPool.sort(()=>Math.random()-.5).slice(0,3).map(c => qsdcExtractAuthor(c));
+
+  // Deduplicate in case same author appears twice
+  const uniqueWrongs = [...new Set(wrongs)].filter(a => a !== correctAuthor).slice(0,3);
+  while(uniqueWrongs.length < 3) uniqueWrongs.push('—');
+
+  const allChoices = [correctAuthor, ...uniqueWrongs].sort(()=>Math.random()-.5);
+  qsdcCorrectIdx = allChoices.indexOf(correctAuthor);
+
+  // Render
+  document.getElementById('qsdc-dom').textContent = qsdcCurrent.domaine + ' · ' + qsdcCurrent.theme;
+  document.getElementById('qsdc-quote').textContent = quote;
+  document.getElementById('qsdc-card').style.display='block';
+  document.getElementById('qsdc-card').className='qsdc-quote-card';
+  document.getElementById('qsdc-choices').style.display='grid';
+  document.getElementById('qsdc-fiche').classList.remove('show');
+  document.getElementById('qsdc-vulga').classList.remove('show');
+  document.getElementById('qsdc-btn-next').style.display='none';
+
+  for(let i=0;i<4;i++){
+    const btn=document.getElementById('qc'+i);
+    btn.textContent=allChoices[i];
+    btn.className='qsdc-choice';
+    btn.disabled=false;
+  }
+  qsdcState='question';
+}
+
+
+
+const VULGA_DICT = {
+  "maïeutique": "L'art de faire accoucher les esprits — Socrate pose des questions pour que son interlocuteur trouve lui-même la vérité qu'il portait en lui sans le savoir.",
+  "arché": "Le principe premier de toutes choses — ce dont tout est fait à l'origine. Les présocratiques cherchaient l'arché : eau pour Thalès, feu pour Héraclite, atomes pour Démocrite.",
+  "logos": "La raison universelle qui ordonne le monde. Chez Héraclite, le logos est la loi cachée derrière le changement apparent des choses.",
+  "eudaimonia": "Le bonheur au sens aristotélicien — non pas le plaisir, mais la vie accomplie, l'épanouissement de ce qu'on est vraiment. Littéralement : avoir un bon démon, être en accord avec son meilleur soi.",
+  "catharsis": "La purification des émotions par le spectacle tragique. En voyant souffrir Œdipe, on pleure — et on sort soulagé, purgé de nos propres angoisses.",
+  "ataraxie": "La tranquillité de l'âme, l'absence de trouble — idéal des épicuriens et des stoïciens. Ce n'est pas l'ennui, c'est la paix profonde qui vient quand on ne désire plus ce qu'on ne peut pas avoir.",
+  "épochè": "La suspension du jugement — refuser de trancher, ni oui ni non, quand on ne peut pas être sûr. La stratégie du sceptique pour éviter l'erreur.",
+  "mimèsis": "L'imitation — pour Platon, l'art imite la réalité qui elle-même imite les Idées. Pour Aristote, la mimèsis est positive : elle permet d'apprendre en représentant.",
+  "agora": "La place publique d'Athènes — lieu de la politique, du commerce, du débat. Symbole de l'espace démocratique où les citoyens se rencontrent et délibèrent ensemble.",
+  "cogito": "Le raisonnement de Descartes : 'Je doute → Je pense → J'existe.' La seule certitude absolue est celle de ma propre pensée — même le doute prouve que je suis là pour douter.",
+  "tabula rasa": "L'ardoise vierge — l'idée de Locke que l'esprit naît entièrement vide, sans idées innées. Tout vient de l'expérience : on apprend en vivant, pas en naissant.",
+  "noumène": "La chose en soi — la réalité telle qu'elle est indépendamment de notre perception. Pour Kant, on ne peut jamais la connaître directement : on ne connaît que les phénomènes (ce que nos sens et notre esprit construisent).",
+  "phénomène": "Ce qui apparaît à notre conscience — non pas la réalité brute, mais la réalité telle que nous la percevons et que notre esprit la structure. Kant : on ne connaît que des phénomènes, jamais les choses en soi.",
+  "dialectique": "La progression par oppositions : une thèse rencontre son contraire (antithèse), et leur conflit produit quelque chose de nouveau (synthèse). Hegel voit l'Histoire entière comme un grand mouvement dialectique.",
+  "impératif catégorique": "La règle morale absolue de Kant : agis seulement selon une maxime que tu pourrais vouloir voir devenir une loi universelle. Pas 'd'accord si ça m'arrange' — mais 'est-ce que tout le monde pourrait agir comme moi ?'",
+  "aliénation": "Devenir étranger à soi-même. Chez Marx, l'ouvrier est aliéné car il ne possède pas le produit de son travail, ne contrôle pas son activité, et se retrouve en compétition avec ses semblables. Il est réduit à un rouage.",
+  "plus-value": "La valeur que l'ouvrier crée au-delà de son salaire, et que le capitaliste s'approprie. Si tu travailles 8h et que tu es payé pour 5h de valeur produite, les 3h restantes vont au patron.",
+  "volonté de puissance": "Chez Nietzsche, ce n'est pas le désir de dominer les autres — c'est la force créatrice qui pousse à se dépasser, à donner forme à sa vie. L'artiste qui crée, le philosophe qui pense au-delà des conventions : voilà la volonté de puissance.",
+  "éternel retour": "L'hypothèse la plus vertigineuse de Nietzsche : et si ta vie devait se répéter identiquement, à l'infini ? Ce test radical te force à ne vivre que des moments que tu voudrais revivre éternellement.",
+  "surhomme": "L'Übermensch de Nietzsche — non pas un super-héros ou un conquérant, mais celui qui a créé ses propres valeurs après la mort de Dieu, sans se réfugier dans le ressentiment ni le nihilisme.",
+  "dasein": "L'être-là — la façon dont Heidegger nomme l'existence humaine. L'homme n'est pas d'abord un sujet pensant (Descartes) : il est jeté dans le monde, il habite un espace, une époque, une langue.",
+  "intentionnalité": "La propriété fondamentale de la conscience selon Husserl : la conscience est toujours conscience de quelque chose. Il n'y a pas de conscience vide — penser, c'est toujours penser à quelque chose.",
+  "mauvaise foi": "Le mensonge à soi-même selon Sartre — se convaincre qu'on n'a pas le choix, qu'on est conditionné, qu'on 'est comme ça'. C'est fuir la liberté radicale en se traitant comme une chose.",
+  "en-soi / pour-soi": "La distinction centrale de Sartre. L'en-soi, c'est les choses (une pierre, une table) — elles sont ce qu'elles sont, sans conscience. Le pour-soi, c'est la conscience humaine — elle n'est jamais fixe, elle se projette toujours vers ce qu'elle n'est pas encore.",
+  "chair du monde": "Le concept clé de Merleau-Ponty — notre corps et le monde sont faits de la même substance perceptive. On ne perçoit pas le monde de l'extérieur : on est tissé dedans, comme une main qui touche peut aussi être touchée.",
+  "habitus": "Chez Bourdieu, l'ensemble des dispositions qu'on incorpore sans s'en rendre compte — façons de parler, de se tenir, de juger. L'habitus de classe fait qu'on se sent 'à sa place' ou 'déplacé' dans certains contextes, sans même y réfléchir.",
+  "biopolitique": "Le pouvoir qui gère les corps et les populations — Foucault montre que le pouvoir moderne ne tue pas (pouvoir de mort) mais administre la vie : naissances, santé, sexualité, normes. Le biopouvoir vous fait vivre d'une certaine façon.",
+  "déconstruction": "La méthode de Derrida — non pas détruire un texte, mais le démonter pour montrer les contradictions qu'il cache. Toute opposition binaire (raison/folie, homme/femme, présence/absence) cache une hiérarchie arbitraire.",
+  "rhizome": "L'image de Deleuze et Guattari pour penser autrement que 'en arbre' (racine → tronc → branches). Un rhizome (comme le gingembre) pousse dans tous les sens, sans centre, sans hiérarchie — c'est une multiplicité sans origine.",
+  "performativité": "Le genre n'est pas ce qu'on est mais ce qu'on fait — selon Butler, la féminité est une série d'actes répétés (gestes, vêtements, attitudes) qui créent l'illusion d'une essence. On ne révèle pas son genre : on le performe.",
+  "différance": "Le néologisme de Derrida (avec un 'a') — jeu sur 'différer' (être différent) et 'différer' (remettre à plus tard). Le sens d'un mot n'est jamais là, présent : il est toujours renvoyé à d'autres mots, indéfiniment.",
+  "simulacre": "Chez Baudrillard, une copie sans original — une image qui ne représente plus rien de réel. Disneyland est un simulacre : il ressemble à l'Amérique de manière plus vraie que la vraie Amérique.",
+  "résonance": "Le concept de Rosa — l'expérience d'être touché par le monde, transformé par lui, de sentir que le monde répond à vos gestes. Le contraire de l'indifférence et de la maîtrise totale.",
+  "umwelt": "Le monde propre d'un organisme — non pas l'environnement objectif (Umgebung), mais la portion du monde qui a une signification pour lui. La tique ne 'voit' que la chaleur et l'odeur du sang. L'humain découpe le monde selon ses perceptions.",
+  "kulturarbeit": "Le travail culturel — chez Benslama, le travail de représentation, de symbolisation, d'élaboration artistique que font les sociétés pour digérer les ruptures. Sans Kulturarbeit, la rupture devient traumatisme.",
+  "weltanschauung": "La vision du monde — l'ensemble des représentations, croyances et valeurs à travers lesquelles un individu ou une culture interprète et perçoit la réalité. Chaque Weltanschauung découpe le monde différemment.",
+  "bovarysme": "Se croire autre que l'on est, vivre dans l'illusion romantique. Emma Bovary se croit l'héroïne d'un roman sentimental alors qu'elle est une bourgeoise de province — cette inadéquation entre le rêve et le réel la détruira.",
+  "stream of consciousness": "Le flux de conscience — technique narrative qui restitue le mouvement continu des pensées, sans ponctuation ni ordre logique. Woolf et Joyce plongent le lecteur dans l'intérieur d'un esprit en train de penser.",
+  "réalisme magique": "Style littéraire où le surnaturel s'intègre au quotidien sans surprise — Garcia Márquez peut faire monter quelqu'un au ciel en pliant du linge sans que personne ne s'étonne. La magie est aussi normale que la pluie.",
+  "négritude": "Mouvement littéraire et politique fondé par Césaire et Senghor — revendiquer et valoriser l'identité noire comme source de fierté, contre l'assimilation coloniale qui demandait aux Africains de devenir 'français'.''",
+  "dialogisme": "Chez Bakhtine, tout texte est habité par d'autres voix — quand tu parles, tu reprends, tu tords, tu combats les mots de ceux qui parlaient avant toi. Il n'y a pas de discours pur, monologique.",
+  "tenebrisme": "La technique picturale de Caravage — contraste radical entre zones très éclairées et ombres profondes, quasi totales. La lumière semble jaillir de nulle part sur les personnages, les arrachant à l'obscurité.",
+  "sfumato": "La technique de Léonard de Vinci — les contours ne sont pas nets mais fondus, vaporeux. La Joconde n'a pas de sourcils dessinés : ils se dissolvent dans la peau. Cela crée une ambiguïté, une vie.",
+  "pointillisme": "Peindre non pas en mélangeant les couleurs sur la palette, mais en posant des points de couleurs pures côte à côte. L'œil du spectateur les mélange optiquement — Seurat a basé cette technique sur la théorie des couleurs.",
+  "gesamtkunstwerk": "L'œuvre d'art totale selon Wagner — une fusion de la musique, du texte, de la mise en scène, de l'architecture, de la lumière en une expérience unique et indissociable. Bayreuth a été conçu pour ça.",
+  "aura": "Chez Benjamin, la présence unique de l'œuvre originale — son hic et nunc, son ici et maintenant. Une photo de la Joconde n'a pas d'aura : la Joconde elle-même, oui. La reproduction détruit l'aura.",
+  "vanité": "Genre pictural baroque — nature morte avec crâne, bougie qui s'éteint, sablier. Rappel de la mort (memento mori) et de la futilité des richesses terrestres. Tout passe, même vous.",
+  "hubris": "La démesure, l'orgueil qui pousse les mortels à défier les dieux. Icare vole trop haut, Prométhée vole le feu, Sisyphe trompe la mort. L'hubris appelle toujours la némésis — la punition divine.",
+  "nemesis": "La justice divine, la punition qui s'abat sur ceux qui ont commis l'hubris. La Némésis est personnifiée comme déesse de la vengeance équitable — elle rétablit l'ordre cosmique.",
+  "psychopompe": "Celui qui guide les âmes des morts — Hermès est le psychopompe de la mythologie grecque. Il conduit les défunts aux Enfers sans s'y perdre lui-même.",
+  "cosmogonie": "Le récit de la création du monde — chaque culture a le sien. La Genèse, l'Enuma Elish babylonien, la Théogonie d'Hésiode : des façons de répondre à 'pourquoi y a-t-il quelque chose plutôt que rien ?'",
+  "théogonie": "Le récit de la naissance et de la généalogie des dieux. La Théogonie d'Hésiode raconte comment du Chaos initial émergent Gaïa, puis les Titans, puis les Olympiens — l'arbre généalogique divin.",
+  "caducée": "Le bâton d'Hermès entouré de deux serpents entrelacés et surmonté d'ailes. Attribut du messager divin, symbole de la médiation et du commerce. (Attention : le caducée est souvent confondu avec le bâton d'Asclépios — un seul serpent — symbole de la médecine.)"
+};
+
+function findVulgaDef(card) {
+  const text = (card.titre + ' ' + card.contenu).toLowerCase();
+  const theme = card.theme.toLowerCase();
+  const domaine = card.domaine.toLowerCase();
+
+  // Try to match concepts in order of relevance
+  for(const [concept, def] of Object.entries(VULGA_DICT)) {
+    const c = concept.toLowerCase();
+    // Check if the concept appears in the card text
+    if(text.includes(c)) {
+      return { concept, def };
+    }
+  }
+
+  // Theme-level fallbacks
+  if(theme.includes('antique') && domaine === 'Philosophie')
+    return { concept: 'eudaimonia', def: VULGA_DICT['eudaimonia'] };
+  if(theme.includes('moderne') && text.includes('kant'))
+    return { concept: 'impératif catégorique', def: VULGA_DICT['impératif catégorique'] };
+  if(theme.includes('contemporaine') && text.includes('foucault'))
+    return { concept: 'biopolitique', def: VULGA_DICT['biopolitique'] };
+
+  return null;
+}
+
+function buildProse(card) {
+  const facts = card.contenu.split(' | ').map(f => f.trim()).filter(f => f.length > 3);
+  const title = card.titre;
+  const theme = card.theme;
+
+  const dashIdx = title.indexOf(' \u2014 ');
+  const author = dashIdx > 0 ? title.substring(0, dashIdx).trim() : title;
+  const oeuvre = dashIdx > 0 ? title.substring(dashIdx + 3).trim() : '';
+
+  // Date fact: starts with digit, ~ or roman numeral century
+  const dateFact = facts.find(f =>
+    /^[~\d]/.test(f) || /^(XIVe|XVe|XVIe|XVIIe|XVIIIe|XIXe|XXe|XXIe|IVe|Ve|IIIe|IIe|Ier|VIe|VIIe|VIIIe|IXe|Xe|XIe|XIIe|XIIIe)/.test(f)
+  );
+  const nonDate = facts.filter(f => f !== dateFact);
+
+  // A fact is "quoted" if it starts AND ends with a quote char — it is a standalone citation
+  // All other facts are plain explanatory content — keep them intact
+  const isStandaloneQuote = f => {
+    const s = f.trim();
+    return (s.startsWith('\u00ab') && s.endsWith('\u00bb')) ||
+           (s.startsWith("'") && s.endsWith("'")) ||
+           (s.startsWith('\u2018') && s.endsWith('\u2019')) ||
+           (s.startsWith('"') && s.endsWith('"'));
+  };
+
+  const standaloneQuotes = nonDate.filter(isStandaloneQuote);
+  const plainFacts = nonDate.filter(f => !isStandaloneQuote(f));
+
+  const paras = [];
+
+  // P1 — Context: who, when, what work
+  let p1 = '';
+  if (oeuvre && dateFact) {
+    p1 = author + ' d\u00e9veloppe ces id\u00e9es dans ' + oeuvre + ' (' + dateFact + ').';
+  } else if (oeuvre) {
+    p1 = oeuvre + ' est l\u2019une des \u0153uvres majeures de ' + author + '.';
+  } else if (dateFact) {
+    p1 = author + ' (' + dateFact + ') est une figure centrale de la ' + theme + '.';
+  } else {
+    p1 = author + ' est une figure essentielle de la ' + theme + '.';
+  }
+  paras.push(p1);
+
+  // P2 — Plain facts as flowing prose (kept verbatim, just joined)
+  const substantial = plainFacts.filter(f => f.length > 12);
+  if (substantial.length >= 1) {
+    // First fact starts a sentence, rest follow naturally
+    let p = substantial[0];
+    if (!p.endsWith('.') && !p.endsWith('!') && !p.endsWith('?')) p += '.';
+    for (let i = 1; i < substantial.length; i++) {
+      const f = substantial[i];
+      const connector = i === 1 ? ' Cela implique que ' : ' Par ailleurs, ';
+      const fLower = f.charAt(0).toLowerCase() + f.slice(1);
+      p += connector + fLower + (fLower.endsWith('.') || fLower.endsWith('!') || fLower.endsWith('?') ? '' : '.');
+    }
+    paras.push(p);
+  }
+
+  // P3 — Standalone citations: display as-is (they are complete in the data)
+  standaloneQuotes.forEach(q => {
+    // Normalise to guillemets if using apostrophes
+    let norm = q.trim();
+    if ((norm.startsWith("'") && norm.endsWith("'"))) {
+      norm = '\u00ab\u00a0' + norm.slice(1, -1).trim() + '\u00a0\u00bb';
+    }
+    if (!norm.endsWith('.') && !norm.endsWith('\u00bb') && !norm.endsWith('!') && !norm.endsWith('?')) {
+      norm += '.';
+    }
+    // Add a short gloss if we recognize this citation
+    const gloss = glossQuote(norm, author);
+    paras.push(norm);
+    if (gloss) paras.push(gloss);
+  });
+
+  // P4 — Significance: why this author matters
+  const sig = buildSignificance(author);
+  if (sig) paras.push(sig);
+
+  return paras
+    .filter(p => p.trim().length > 5)
+    .map(p => '<p style="margin-bottom:12px;line-height:1.85">' + p + '</p>')
+    .join('');
+}
+
+function glossQuote(text, author) {
+  const t = text.toLowerCase();
+  if (t.includes('je pense donc je suis') || (t.includes('cogito') && t.includes('ergo')))
+    return 'Autrement dit\u00a0: la seule chose dont on ne peut douter, c\u2019est l\u2019acte m\u00eame de douter \u2014 et donc d\u2019exister en tant que pens\u00e9e.';
+  if (t.includes('existence pr\u00e9c\u00e8de') && t.includes('essence'))
+    return 'L\u2019homme n\u2019a pas de nature fix\u00e9e \u00e0 la naissance\u00a0: il se d\u00e9finit enti\u00e8rement par ce qu\u2019il fait de sa vie. Aucun dieu ni aucune nature ne d\u00e9cide \u00e0 sa place.';
+  if (t.includes('enfer') && t.includes('les autres'))
+    return 'Non pas que les autres soient mauvais, mais que leur regard nous fige dans une image de nous-m\u00eames que nous ne contr\u00f4lons pas.';
+  if (t.includes('dieu est mort'))
+    return 'Nietzsche ne se r\u00e9jouit pas\u00a0: il constate que l\u2019Europe a perdu le socle moral sur lequel elle s\u2019appuyait depuis des si\u00e8cles, sans avoir encore trouv\u00e9 quoi y substituer.';
+  if (t.includes('sisyphe heureux'))
+    return 'Face \u00e0 l\u2019absurdit\u00e9, Camus choisit la r\u00e9volte plut\u00f4t que le d\u00e9sespoir\u00a0: accepter l\u2019absurde sans le fuir, et y trouver une forme de libert\u00e9.';
+  if (t.includes('on ne na\u00eet pas femme'))
+    return 'Beauvoir distingue le sexe biologique de la f\u00e9minit\u00e9 sociale construite. La femme n\u2019est pas une essence naturelle\u00a0: c\u2019est un r\u00f4le impos\u00e9 par la soci\u00e9t\u00e9.';
+  if (t.includes('ne peut rien concevoir de plus grand'))
+    return 'Argument d\u2019Anselme\u00a0: si Dieu n\u2019existait que dans notre esprit, on pourrait imaginer un Dieu encore plus grand (qui existerait aussi dans la r\u00e9alit\u00e9) \u2014 donc Dieu doit n\u00e9cessairement exister en r\u00e9alit\u00e9.';
+  if (t.includes('condamn') && t.includes('libre'))
+    return 'La libert\u00e9 selon Sartre n\u2019est pas un cadeau\u00a0: on ne peut pas ne pas choisir. M\u00eame ne rien faire est un choix dont on est enti\u00e8rement responsable.';
+  if (t.includes('imaginer c') && t.includes('hausser le r'))
+    return 'Pour Bachelard, imaginer n\u2019est pas fuir le r\u00e9el mais l\u2019enrichir\u00a0: l\u2019imagination po\u00e9tique r\u00e9v\u00e8le des dimensions du monde que la perception ordinaire ne peut atteindre.';
+  if (t.includes('ne s\u2019agit plus d\u2019interpr\u00e9ter'))
+    return 'Nancy reprend Marx\u00a0: la philosophie ne doit plus se contenter d\u2019expliquer le monde, elle doit contribuer \u00e0 le transformer par l\u2019action r\u00e9fl\u00e9chie.';
+  if (t.includes('peut parler') && t.includes('se taire'))
+    return 'Les grandes questions (Dieu, le sens de la vie) ne sont pas fausses \u2014 elles sont insens\u00e9es, car elles d\u00e9passent ce que le langage peut exprimer sans se contredire.';
+  if (t.includes('raison est esclave des passions'))
+    return 'Hume renverse la philosophie classique\u00a0: ce ne sont pas nos d\u00e9sirs qui ob\u00e9issent \u00e0 la raison, mais la raison qui calcule comment satisfaire nos d\u00e9sirs.';
+  if (t.includes('l\u2019\u00e9tranger') && t.includes('fronti\u00e8re'))
+    return 'Sans fronti\u00e8res, il n\u2019y aurait pas d\u2019\u00e9trangers \u2014 seulement des humains. La figure de l\u2019\u00e9tranger est une construction politique, non une donn\u00e9e naturelle.';
+  if (t.includes('chair du monde'))
+    return 'Notre corps et le monde sont faits de la m\u00eame \u00e9toffe\u00a0: on ne per\u00e7oit pas le monde de l\u2019ext\u00e9rieur, on est tiss\u00e9 dedans.';
+  if (t.includes('zoom politikon') || (t.includes('animal') && t.includes('politique')))
+    return 'L\u2019\u00eatre humain ne peut se r\u00e9aliser pleinement qu\u2019au sein d\u2019une communaut\u00e9 politique\u00a0: vivre seul, c\u2019est \u00eatre soit une b\u00eate soit un dieu.';
+  return '';
+}
+
+function buildSignificance(author) {
+  const a = author.toLowerCase();
+  if (a.includes('kant'))
+    return 'Kant est incontournable\u00a0: apr\u00e8s lui, on ne peut plus poser na\u00efvement la question de la connaissance sans se demander comment l\u2019esprit structure ce qu\u2019il per\u00e7oit.';
+  if (a.includes('nietzsche'))
+    return 'Nietzsche ne propose pas un syst\u00e8me \u2014 il dynamite toutes les certitudes morales et invite \u00e0 cr\u00e9er ses propres valeurs \u00e0 partir de rien.';
+  if (a.includes('hegel'))
+    return 'Hegel est difficile mais fondateur\u00a0: Marx, Sartre, Koj\u00e8ve \u2014 une grande partie de la pens\u00e9e du XXe si\u00e8cle est une r\u00e9ponse \u00e0 Hegel.';
+  if (a.includes('platon'))
+    return 'Platon pose les questions que la philosophie n\u2019a jamais cess\u00e9 de d\u00e9battre\u00a0: justice, v\u00e9rit\u00e9, beaut\u00e9. Son influence sur l\u2019Occident est sans \u00e9gale.';
+  if (a.includes('aristote'))
+    return 'Aristote revient au concret l\u00e0 o\u00f9 Platon s\u2019envole\u00a0: \u00e9thique pratique, politique r\u00e9elle, observation de la nature.';
+  if (a.includes('marx'))
+    return 'M\u00eame ceux qui rejettent Marx utilisent ses concepts (ali\u00e9nation, id\u00e9ologie, lutte des classes) sans toujours le savoir.';
+  if (a.includes('foucault'))
+    return 'Foucault nous apprend \u00e0 voir le pouvoir l\u00e0 o\u00f9 on ne le cherchait pas\u00a0: dans les h\u00f4pitaux, les prisons, les discours m\u00e9dicaux.';
+  if (a.includes('sartre'))
+    return 'Sartre radicalise la libert\u00e9\u00a0: nous sommes enti\u00e8rement responsables de ce que nous sommes, sans excuses possibles.';
+  if (a.includes('camus'))
+    return 'Camus offre une r\u00e9ponse \u00e0 l\u2019absurde qui n\u2019est ni religieuse ni nihiliste\u00a0: rester debout, lucide, r\u00e9volt\u00e9.';
+  if (a.includes('heidegger'))
+    return 'Heidegger renouvelle la question de l\u2019existence, mais son engagement nazi reste une ombre indissociable de son \u0153uvre.';
+  if (a.includes('beauvoir') || a.includes('de beauvoir'))
+    return 'Le Deuxi\u00e8me Sexe a fond\u00e9 le f\u00e9minisme philosophique en montrant que la condition f\u00e9minine est construite, non naturelle.';
+  if (a.includes('bourdieu'))
+    return 'Bourdieu explique pourquoi les in\u00e9galit\u00e9s sociales se reproduisent si bien\u00a0: les domin\u00e9s les int\u00e9riorisent sans en avoir conscience.';
+  if (a.includes('wittgenstein'))
+    return 'Wittgenstein montre que beaucoup de probl\u00e8mes philosophiques sont des confusions de langage \u2014 les dissoudre, c\u2019est d\u00e9j\u00e0 philosopher.';
+  if (a.includes('arendt'))
+    return 'Arendt est essentielle pour penser le totalitarisme\u00a0: le mal peut \u00eatre banal, et la libert\u00e9 ne survit que dans l\u2019espace public partag\u00e9.';
+  if (a.includes('anselme'))
+    return 'La preuve ontologique a fascin\u00e9 et agac\u00e9 les philosophes pendant 900 ans \u2014 Descartes la reprend, Kant la d\u00e9truit, les d\u00e9bats continuent.';
+  if (a.includes('descartes'))
+    return 'Descartes fonde la philosophie moderne sur la certitude du sujet pensant \u2014 un point de d\u00e9part qui structure encore notre fa\u00e7on de penser.';
+  if (a.includes('spinoza'))
+    return 'Spinoza est le philosophe de l\u2019immanence absolue\u00a0: pas de Dieu ext\u00e9rieur au monde, pas de libre arbitre \u2014 et pourtant une \u00e9thique exigeante.';
+  if (a.includes('bachelard'))
+    return 'Bachelard r\u00e9concilie la science et la po\u00e9sie\u00a0: l\u2019imagination n\u2019est pas l\u2019ennemie de la connaissance mais une fa\u00e7on diff\u00e9rente d\u2019appr\u00e9hender le r\u00e9el.';
+  if (a.includes('rosa'))
+    return 'Rosa diagnostique un probl\u00e8me central de nos soci\u00e9t\u00e9s\u00a0: \u00e0 vouloir tout contr\u00f4ler et rendre disponible, on se prive des exp\u00e9riences les plus pr\u00e9cieuses.';
+  return '';
+}
+
+function qsdcAnswer(idx) {
+  if(qsdcState!=='question') return;
+  qsdcState='answered';
+  const correct = (idx===qsdcCorrectIdx);
+
+  // Show correct/wrong on buttons
+  for(let i=0;i<4;i++){
+    const btn=document.getElementById('qc'+i);
+    btn.disabled=true;
+    if(i===qsdcCorrectIdx) btn.className='qsdc-choice reveal-ans';
+    else if(i===idx && !correct) btn.className='qsdc-choice wrong-ans';
+  }
+
+  // Card feedback
+  document.getElementById('qsdc-card').classList.add(correct?'correct':'wrong');
+
+  // Always show the fiche explicative (win or lose)
+  const prose = buildProse(qsdcCurrent);
+  document.getElementById('qsdc-fiche-prose').innerHTML = prose;
+
+  // Extract mots-clés: words in guillemets from the card
+  const cardText = qsdcCurrent.contenu + ' ' + qsdcCurrent.titre;
+  const motMatches = cardText.match(/« ?([^»]{2,25}) ?»/g) || [];
+  const mots = [...new Set(motMatches.map(m => m.replace(/[«» ]/g,'').trim()))].slice(0,8);
+  // Also extract key terms from theme name
+  if(qsdcCurrent.theme) mots.unshift(qsdcCurrent.theme);
+  const uniqueMots = [...new Set(mots)].slice(0,8);
+  if(uniqueMots.length > 0) {
+    document.getElementById('qsdc-mots-section').style.display='block';
+    document.getElementById('qsdc-fiche-mots').innerHTML = uniqueMots.map(m => '<span class="qsdc-mot">'+m+'</span>').join('');
+  } else {
+    document.getElementById('qsdc-mots-section').style.display='none';
+  }
+
+  // Vulgarisation encart
+  const vulga = findVulgaDef(qsdcCurrent);
+  if(vulga) {
+    document.getElementById('qsdc-vulga-concept').textContent = vulga.concept.charAt(0).toUpperCase() + vulga.concept.slice(1);
+    document.getElementById('qsdc-vulga-text').textContent = vulga.def;
+    document.getElementById('qsdc-vulga').classList.add('show');
+  } else {
+    document.getElementById('qsdc-vulga').classList.remove('show');
+  }
+
+  document.getElementById('qsdc-fiche').classList.add('show');
+
+  if(correct){
+    qsdcStreak++;
+    document.getElementById('qsdc-streak').textContent=qsdcStreak;
+    if(qsdcStreak>qsdcRecord){
+      qsdcRecord=qsdcStreak;
+      document.getElementById('qsdc-record').textContent=qsdcRecord;
+    }
+    document.getElementById('qsdc-btn-next').style.display='block';
+  } else {
+    qsdcStreak=0;
+    document.getElementById('qsdc-streak').textContent='0';
+    setTimeout(()=>{
+      document.getElementById('qsdc-btn-restart').style.display='block';
+    }, 600);
+  }
+}
+
+function qsdcNext() {
+  document.getElementById('qsdc-fiche').classList.remove('show');
+  qsdcShowNext();
+}
+
 </script>
 </body>
 </html>
